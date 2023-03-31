@@ -2,16 +2,6 @@
 
 This Github Action builds a Docker image from a Dockerfile and pushes it to Docker Hub, GitHub Container Registry, and Jfrog Container Registry.
 
-<!--  -->
-- create a docker repo in jfrog repo view
-- open it in artifactory view
-- select your repo
-- click "set me up"
-- click "gen token and create instructions"
-- make note of your token, we will use it to enable our github action to authenticate to our jfrog container registry alongside your username (email most likely)
-- update gh action secrets with artifactory registry user/pass
-<!--  -->
-
 ## Usage
 
 1. Create a `.github/workflows/docker.yml` file in your Github repository.
