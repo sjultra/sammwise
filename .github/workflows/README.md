@@ -1,18 +1,41 @@
 # Build and Push Docker Image Github Action
 
-This Github Action builds a Docker image from a Dockerfile and pushes it to both Docker Hub and GitHub Container Registry.
+This Github Action builds a Docker image from a Dockerfile and pushes it to Docker Hub, GitHub Container Registry, and Jfrog Container Registry.
+
+<!--  -->
+- create a docker repo in jfrog repo view
+- open it in artifactory view
+- select your repo
+- click "set me up"
+- click "gen token and create instructions"
+- make note of your token, we will use it to enable our github action to authenticate to our jfrog container registry alongside your username (email most likely)
+- update gh action secrets with artifactory registry user/pass
+<!--  -->
 
 ## Usage
 
 1. Create a `.github/workflows/docker.yml` file in your Github repository.
 1. Copy the contents of this action into the `docker.yml` file.
-1. Create secrets for your Docker Hub username and token, and your GitHub token. Add these secrets to your repository's secrets.
+1. If using artifactory, login to your instance and
+    1. Create a `Local Repository` that will serve as our Container Registry.
+    1. Select `Docker` as the package type.
+    1. Set a value for `Repository Key`. This will be your repository name (`JFROG_REPOSITORY` as we'll see in the steps below).
+    1. Select your repository from the `Artifactory > Artifacts` view.
+    1. Click `Set Me Up` and `Generate token and create instructions`.
+    1. Save the generated token, this will be your registry password (`JFROG_TOKEN` as we'll see in the steps below).
+    1. Your Jfrog email will be your username (`JFROG_USERNAME` as we'll see in the steps below).
+    1. Your Jfrog fully qualified domain name (e.g; `artifactory.yourcompany.io`) will be your registry name (`JFROG_REGISTRY` as we'll see in the steps below).
+1. Create secrets for your Docker Hub username and token, your GitHub token, and your Jfrog username, token, registry, and repository. Add these secrets to your repository's secrets.
  
 ```yaml
 secrets:
   DOCKERHUB_USERNAME: <your_username>
   DOCKERHUB_TOKEN: <your_token>
   GH_TOKEN: <your_token>
+  JFROG_USERNAME: <your_username>
+  JFROG_TOKEN: <your_token>
+  JFROG_REGISTRY: <your_registry>
+  JFROG_REPOSITORY: <your_repository>
 ```
 4. Modify the tags field in the Build and push step to reflect your desired Docker image name and version.
 ```yaml
@@ -25,6 +48,7 @@ secrets:
     tags: |
       ${{ secrets.DOCKERHUB_USERNAME }}/sammwise:latest
       ghcr.io/${{ github.repository_owner }}/sammwise:latest
+      ${{ secrets.JFROG_REGISTRY }}/${{ secrets.JFROG_REPOSITORY }}/sammwise:latest
 ```
 ## Workflow
 1. The workflow is triggered when code is pushed to the main branch, or when it is manually triggered from the Actions tab.
