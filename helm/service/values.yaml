@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: sjultra/sammwise
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  name: owasp-sammwise-service
+  type: ClusterIP
+  httpPort: 80
+  targetPort: 3000
+
+env:
+  name: dev
