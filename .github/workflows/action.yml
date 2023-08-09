@@ -63,18 +63,18 @@ jobs:
       # ${{ secrets.JFROG_REGISTRY }}/${{ secrets.JFROG_REPOSITORY }}/sammwise:latest
 
       # install and authenticate jfrog/artifactory CLI
-      - uses: jfrog/setup-jfrog-cli@v3.0.0
-      - name: Verify artifactory server connection
-        run: jf rt ping
+      # - uses: jfrog/setup-jfrog-cli@v3.0.0
+      # - name: Verify artifactory server connection
+      #   run: jf rt ping
 
-      - name: Cleanup artifactory
-        run: |
-          jf rt del "owasp-swammwise-helm/*"
+      # - name: Cleanup artifactory
+      #   run: |
+      #     jf rt del "owasp-swammwise-helm/*"
 
-      - name: Distribute source to artifactory
-        run: |
-          cd ./helm
-          tar -cvzf sammwise.tgz ./service/
-          jf rt upload sammwise.tgz owasp-sammwise-helm/
-          cd -
+      # - name: Distribute source to artifactory
+      #   run: |
+      #     cd ./helm
+      #     tar -cvzf sammwise.tgz ./service/
+      #     jf rt upload sammwise.tgz owasp-sammwise-helm/
+      #     cd -
 
