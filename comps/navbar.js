@@ -8,10 +8,10 @@ const Navbar = () => {
             <div className = "logo">
                 <Image src = "/logo.png" width = {77} height = {77}/>
             </div>
-            <Link href="/"><a>Home</a></Link>
-            <Link href="/about"><a>About</a></Link>
-            <Link href="/assessment"><a>Assessment</a></Link>
-            <Link href="/results"><a>Results</a></Link>
+            <Link href="/" legacyBehavior><a>Home</a></Link>
+            <Link href="/about" legacyBehavior><a>About</a></Link>
+            <Link href="/assessment" legacyBehavior><a>Assessment</a></Link>
+            <Link href="/results" legacyBehavior><a>Results</a></Link>
         </nav>
       );
 }

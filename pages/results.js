@@ -1,22 +1,25 @@
+import dynamic from "next/dynamic";
+
 // react imports
-import {Radar, Doughnut, Bar} from 'react-chartjs-2';
+import {Radar, Bar} from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
 import { Flex, Box } from 'reflexbox'
-import GaugeChart from 'react-gauge-chart'
+// import GaugeChart from 'react-gauge-chart'
 import React, {useState,useEffect, useRef} from 'react';
 import Head from 'next/head'
-import ReactToPrint, {PrintContextConsumer} from 'react-to-print';
-import {useRouter} from 'next/router'
+import ReactToPrint from 'react-to-print';
 
 //local imports
-import surveyCalculatorJSON from '../comps/surveyDisplay/calculator';
 import DonutGraph from '../comps/surveyDisplay/graphs/donutgraph';
 import SpiderGraph from '../comps/surveyDisplay/graphs/spidergraph';
 import Bargraph from '../comps/surveyDisplay/graphs/bargraph';
 import InputFile from '../comps/inputfile';
 import Dataset from '../comps/surveyDisplay/graphs/datasetprops';
-import ComponentToPrint from '../comps/ComponentToPrint';
 import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
+
+const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
+Chart.register(...registerables);
 
 var completionText
 var dataENV = []

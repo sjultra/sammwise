@@ -16,7 +16,7 @@ const NotFound = () => {
         <div className = "not-found">
             <h1>Turn back</h1>
             <h2>This is not the promised land</h2>
-            <p>Go back from whence you came..<Link href = "/"><a>Home</a></Link></p>
+            <p>Go back from whence you came..<Link href = "/" legacyBehavior><a>Home</a></Link></p>
 
         </div>
 

@@ -1,9 +1,14 @@
-import InputFile from '../comps/inputfile';
-import Dataset from '../comps/surveyDisplay/graphs/datasetprops';
-import {Radar, Doughnut, Bar} from 'react-chartjs-2';
+import dynamic from "next/dynamic";
+
+import {Radar, Bar} from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
 import { Flex, Box } from 'reflexbox'
-import GaugeChart from 'react-gauge-chart'
+
 import React from 'react';
+
+const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
+Chart.register(...registerables);
+
 //This component is for refactoring results page so the print button can be added. 
 
 class ComponentToPrint extends React.PureComponent {
