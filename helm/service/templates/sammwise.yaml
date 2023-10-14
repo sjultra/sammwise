@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sammwise
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sammwise
+  template:
+    metadata:
+      labels:
+        app: sammwise
+    spec:
+      containers:
+        - name: sammwise
+          image: {{ .Values.sammwise.image }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sammwise
+spec:
+  selector:
+    app: sammwise
+  ports:
+    - protocol: TCP
+      port: {{ .Values.sammwise.port }}
+      targetPort: 3000
+
