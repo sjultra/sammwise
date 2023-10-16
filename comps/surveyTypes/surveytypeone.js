@@ -4,7 +4,9 @@
 
 import React, {useState, useEffect, useRef} from 'react';
 import 'survey-react/survey.css';
-import * as Survey from 'survey-react';
+import * as Survey from 'survey-react'
+
+// {(typeof window !== 'undefined') &&
 import { Flex, Box } from 'reflexbox'
 import assert, { strictEqual } from 'assert';
 //local imports
@@ -17,8 +19,9 @@ import router, {useRouter} from 'next/router'
 import question_desc from '../surveys/question_desc';
 
 // import saveText from '../saveResponses';
+// Survey.
 
-
+// console.log(Survey());
 const survey = new Survey.Model(Json());
 var isDropDownButtonClicked = false;
 

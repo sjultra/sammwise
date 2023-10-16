@@ -89,8 +89,8 @@ const results = () => {
         for (const key in assessmentSessionStateData) {
             answer_values.push(assessmentSessionStateData[key]);
         }
-        var answer_sum = answer_values.reduce(reducer);
-        var userStateUpdate = JSON.parse(sessionStorage.getItem('userState'));
+        var answer_sum = answer_values.length > 0 ? answer_values.reduce(reducer) : 0;
+        var userStateUpdate = JSON.parse(sessionStorage.getItem('userState')) || {};
         userStateUpdate['page'] = 'resultsPage';
         userStateUpdate['has_switched_page'] = true;
         sessionStorage.setItem('userState', JSON.stringify(userStateUpdate));

@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
 import 'survey-react/survey.css';
+// import 'survey-core/defaultV2.min.css';
 import Head from 'next/head'
 //local imports 
-import Mysurvey from '../comps/surveyDisplay/surveyone'
+import dynamic from 'next/dynamic';
+// import Mysurvey from '../comps/surveyDisplay/surveyone'
+const Mysurvey = dynamic(() => import('../comps/surveyDisplay/surveyone'), { ssr: false })
 
 
 
