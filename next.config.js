@@ -2,20 +2,44 @@ module.exports = {
     async rewrites() {
       return [
         {
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
           source: '/',
-          destination: '/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy/' // Proxy to Backend
+          destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy' // Proxy to Backend
         },
         {
-          source: '/about',
-          destination: '/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy/about' // Proxy to Backend
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
+          source: '/api/:path*/about',
+          destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy/about' // Proxy to Backend
         },
         {
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
           source: '/assessment',
-          destination: '/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy/assessment' // Proxy to Backend
+          destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy/assessment' // Proxy to Backend
         },
         {
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
           source: '/results',
-          destination: '/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy/results' // Proxy to Backend
+          destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy/results' // Proxy to Backend
         }
       ]
     }
