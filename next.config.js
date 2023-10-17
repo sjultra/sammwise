@@ -8,6 +8,26 @@ module.exports = {
                   value: 'rancher.vzxy.net',
                 },
               ],
+          source: '/:path*/',
+          destination: '/:path*/' // Proxy to Backend
+        },
+        {
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
+          source: '/:path*/about',
+          destination: '/:path*/about' // Proxy to Backend
+        },
+        {
+            has: [
+                {
+                  type: 'host',
+                  value: 'rancher.vzxy.net',
+                },
+              ],
           source: '/',
           destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy' // Proxy to Backend
         },
