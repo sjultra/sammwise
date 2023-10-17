@@ -18,7 +18,7 @@ module.exports = {
                   value: 'rancher.vzxy.net',
                 },
               ],
-          source: '/api/:path*/about',
+          source: '/about',
           destination: '/api/v1/namespaces/sammwise/services/http%3sammwise%380/proxy/about' // Proxy to Backend
         },
         {
