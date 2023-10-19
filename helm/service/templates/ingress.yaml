@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sammwise-ingress
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/issuer: "sammwise-issuer"
+    traefik.ingress.kubernetes.io/redirect-entry-point: "https"
+spec:
+  rules:
+    - host: sammwise.vzxy.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: sammwise
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix
+  tls:
+  - hosts:
+    - sammwise.vzxy.net
+    secretName: sammwise-tls-prod
