@@ -4,8 +4,8 @@ metadata:
   name: sammwise-tls-prod
 spec:
   secretName: sammwise-tls-prod
-  privateKey:
-    rotationPolicy: Always
+  # privateKey:
+  #   rotationPolicy: Always
   issuerRef:
     name: sammwise-issuer
   commonName: sammwise.vzxy.net
