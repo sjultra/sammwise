@@ -21,4 +21,4 @@ spec:
   tls:
   - hosts:
     - sammwise.vzxy.net
-    # secretName: sammwise-tls-prod
+    secretName: sammwise-tls-prod
