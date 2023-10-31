@@ -24,7 +24,12 @@ spec:
   selector:
     app: sammwise
   ports:
-    - protocol: TCP
-      port: {{ .Values.sammwise.port }}
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000
+    - name: https
+      protocol: TCP
+      port: 443
       targetPort: 3000
 
