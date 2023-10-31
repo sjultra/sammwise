@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sammwise-tls-prod
+  namespace: sammwise
+spec:
+  secretName: sammwise-tls-prod
+  issuerRef:
+    name: sammwise-issuer
+  commonName: sammwise.vzxy.net
+  dnsNames:
+  - sammwise.vzxy.net
