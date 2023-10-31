@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: sammwise-issuer
+  namespace: sammwise
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: ops@sjultra.com
+    privateKeySecretRef:
+      name: sammwise-tls-prod
+    solvers:
+    - http01:
+        ingress:
+          class: traefik

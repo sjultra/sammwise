@@ -4,8 +4,8 @@ metadata:
   name: sammwise-ingress
   annotations:
     kubernetes.io/ingress.class: "traefik"
-    # cert-manager.io/issuer: "sammwise-issuer"
-    # traefik.ingress.kubernetes.io/redirect-entry-point: "https"
+    cert-manager.io/issuer: "sammwise-issuer"
+    traefik.ingress.kubernetes.io/redirect-entry-point: "https"
 spec:
   rules:
     - host: sammwise.vzxy.net
@@ -21,4 +21,4 @@ spec:
   tls:
   - hosts:
     - sammwise.vzxy.net
-    # secretName: sammwise-tls-prod
+    secretName: sammwise-tls-prod
