@@ -19,6 +19,6 @@ spec:
             path: /
             pathType: Prefix
   tls:
-  - hosts:
-    - sammwise.vzxy.net
-    secretName: sammwise-tls-prod
+    - hosts:
+      - sammwise.vzxy.net
+      secretName: sammwise-tls-prod
