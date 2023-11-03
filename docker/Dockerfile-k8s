@@ -6,15 +6,21 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --frozen-lockfile --prefer-offline
 
-# Copy source code
+# Copy source code and build
 FROM node:18.16.0-alpine AS runner
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Add user and group first to ensure consistent ids
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nextjs -u 1001 -G nodejs
 
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nextjs -u 1001
+# Ensure that the nextjs user owns the /app directory
+COPY --chown=nextjs:nodejs --from=deps /app/node_modules ./node_modules
+COPY --chown=nextjs:nodejs . .
+
+# Give ownership to nextjs user to the work directory
+# This should be done before switching to nextjs user
+RUN chown -R nextjs:nodejs /app
 
 USER nextjs
 
@@ -22,4 +28,8 @@ EXPOSE 3000
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
+# Start the Next.js application in development mode
 CMD ["npm", "run", "dev"]
+
+
+# CMD ["tail", "-f", "/dev/null"]
