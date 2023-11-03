@@ -5,6 +5,7 @@ ingressHost: https://kubernetes.default.svc
 sammwise:
   image: sjultra/sammwise:latest
   # port: 80
+  NEXT_PUBLIC_BASE_PATH: ""
   # NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/{{ .Values.global.fleet.cluster.name }}/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
 
 # issuer:

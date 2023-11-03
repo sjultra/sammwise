@@ -1,0 +1,4 @@
+default:
+  values:
+    sammwise:
+      NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/{{ .Cluster.Name }}/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"

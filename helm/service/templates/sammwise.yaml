@@ -18,8 +18,7 @@ spec:
           {{- if not .Values.ingress }}
           env:
             - name: NEXT_PUBLIC_BASE_PATH
-              # value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
-              value: "/k8s/clusters/{{ .Values.global.fleet.cluster.name }}/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
+              value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
           {{- end }}
 ---
 apiVersion: v1
