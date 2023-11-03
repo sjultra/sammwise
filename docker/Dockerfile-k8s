@@ -1,0 +1,25 @@
+FROM node:18.16.0-alpine AS deps
+
+# Install dependencies
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install --frozen-lockfile --prefer-offline
+
+# Copy source code
+FROM node:18.16.0-alpine AS runner
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV NEXT_TELEMETRY_DISABLED 1
+
+CMD ["npm", "run", "dev"]
