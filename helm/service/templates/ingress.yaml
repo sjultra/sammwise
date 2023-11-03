@@ -1,3 +1,4 @@
+{{- if .Values.ingress }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,7 +9,7 @@ metadata:
     traefik.ingress.kubernetes.io/redirect-entry-point: "https"
 spec:
   rules:
-    - host: sammwise.vzxy.net
+    - host: {{ .Values.ingress.ingress-domain }}
       http:
         paths:
           - backend:
@@ -20,5 +21,6 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-      - sammwise.vzxy.net
+      - {{ .Values.ingress.ingress-domain }}
       secretName: sammwise-tls-prod
+{{- end }}

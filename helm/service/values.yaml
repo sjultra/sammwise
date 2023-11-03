@@ -6,3 +6,8 @@ sammwise:
   image: sjultra/sammwise:latest
   port: 80
 
+# issuer:
+#   issuer-email: ops@sjultra.com
+
+# ingress:
+#  ingress-domain: sammwise.vzxy.net

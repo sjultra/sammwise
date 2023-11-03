@@ -1,3 +1,4 @@
+{{- if .Values.issuer }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -6,10 +7,11 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: ops@sjultra.com
+    email: {{ .Values.issuer.issuer-email }}
     privateKeySecretRef:
       name: sammwise-tls-prod
     solvers:
     - http01:
         ingress:
           class: traefik
+{{- end }}
