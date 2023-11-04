@@ -14,12 +14,12 @@ spec:
     spec:
       containers:
         - name: sammwise
-          image: {{ .Values.sammwise.image }}
-          {{- if not .Values.ingress }}
+          image: {{ .Values.sammwise.image | quote }}
+          # {{- if .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
           env:
             - name: NEXT_PUBLIC_BASE_PATH
-              value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
-          {{- end }}
+              value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH | quote }}
+          # {{- end }}
 ---
 apiVersion: v1
 kind: Service
