@@ -1,7 +1,7 @@
 module.exports = {
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  hostname: '0.0.0.0',
+  hostname: 'rancher.vzxy.net',
   // images: {
   //   path: process.env.NEXT_PUBLIC_BASE_PATH || '',
   // },
