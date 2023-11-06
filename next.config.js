@@ -18,7 +18,7 @@ module.exports = {
     return [
       {
         source: '/',
-        destination: process.env.NEXT_BASE_PATH // Proxy to Backend
+        destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH // Proxy to Backend
       },
       {
         has: [
@@ -28,7 +28,7 @@ module.exports = {
           },
         ],
         source: '/',
-        destination: process.env.NEXT_BASE_PATH // Proxy to Backend
+        destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH // Proxy to Backend
       },
       {
         has: [
@@ -38,7 +38,7 @@ module.exports = {
           },
         ],
         source: '/about',
-        destination: process.env.NEXT_BASE_PATH + '/about' // Proxy to Backend
+        destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH + '/about' // Proxy to Backend
       },
       {
         has: [
@@ -48,7 +48,7 @@ module.exports = {
           },
         ],
         source: '/assessment',
-        destination: process.env.NEXT_BASE_PATH + '/assessment' // Proxy to Backend
+        destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH + '/assessment' // Proxy to Backend
       },
       {
         has: [
@@ -58,7 +58,7 @@ module.exports = {
           },
         ],
         source: '/results',
-        destination: process.env.NEXT_BASE_PATH + '/results' // Proxy to Backend
+        destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH + '/results' // Proxy to Backend
       }
     ]
   }
