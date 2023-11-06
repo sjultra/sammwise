@@ -24,7 +24,7 @@ module.exports = {
         has: [
           {
             type: 'host',
-            value: 'rancher.vzxy.net',
+            value: process.env.RANCHER_SERVER,
           },
         ],
         source: '/',
@@ -34,7 +34,7 @@ module.exports = {
         has: [
           {
             type: 'host',
-            value: 'rancher.vzxy.net',
+            value: process.env.RANCHER_SERVER,
           },
         ],
         source: '/about',
@@ -44,7 +44,7 @@ module.exports = {
         has: [
           {
             type: 'host',
-            value: 'rancher.vzxy.net',
+            value: process.env.RANCHER_SERVER,
           },
         ],
         source: '/assessment',
@@ -54,7 +54,7 @@ module.exports = {
         has: [
           {
             type: 'host',
-            value: 'rancher.vzxy.net',
+            value: process.env.RANCHER_SERVER,
           },
         ],
         source: '/results',
