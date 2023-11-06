@@ -17,11 +17,8 @@ spec:
           image: {{ .Values.sammwise.image | quote }}
           # {{- if .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
           env:
-            # - name: NEXT_PUBLIC_BASE_PATH
-            #   value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH | quote }}
-            - name: RANCHER_SERVER
-              value: {{ .Values.sammwise.RANCHER_SERVER | quote }}
-
+            - name: NEXT_PUBLIC_BASE_PATH
+              value: {{ .Values.sammwise.NEXT_PUBLIC_BASE_PATH | quote }}
           # {{- end }}
 ---
 apiVersion: v1
