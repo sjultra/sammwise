@@ -1,12 +1,13 @@
 module.exports = {
-  basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  hostname: 'rancher.vzxy.net',
+  basePath: process.env.NEXT_BASE_PATH || '',
+  assetPrefix: process.env.RANCHER_SERVER + process.env.NEXT_PUBLIC_BASE_PATH || '',
+  hostname: process.env.RANCHER_SERVER,
   // images: {
   //   path: process.env.NEXT_PUBLIC_BASE_PATH || '',
   // },
 
   publicRuntimeConfig: {
-    webSocketBasePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
+    hmrEndpoint: 'wss://'+process.env.RANCHER_SERVER+process.env.NEXT_PUBLIC_BASE_PATH,
+    webSocketBasePath: 'wss://'+process.env.RANCHER_SERVER+process.env.NEXT_PUBLIC_BASE_PATH,
   }
 };

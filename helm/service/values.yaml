@@ -6,6 +6,7 @@ sammwise:
   image: sjultra/sammwise:latest
   # port: 80
   NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/c-m-26nk9h9f/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
+  RANCHER_SERVER: "rancher.vzxy.net"
 
 # issuer:
 #   issuerEmail: ops@sjultra.com
