@@ -19,8 +19,10 @@ spec:
                   number: 80
             path: /
             pathType: Prefix
+  {{- if .Values.issuer }}
   tls:
     - hosts:
       - {{ .Values.ingress.ingressDomain }}
-      secretName: sammwise-tls-prod
+      secretName: - {{ .Values.issuer.secretName }}
+  {{- end }}
 {{- end }}
