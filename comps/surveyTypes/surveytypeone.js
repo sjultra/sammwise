@@ -469,10 +469,17 @@ const Mysurvey = (prop) => {
         if (userStateData != 'assessmentPage'){
             return true;
         } else {
-            return false
+            return false;
         }
     }
 
+    async function saveAssesmentToDB(){
+        const response = await fetch('/api/assesment', {
+            method: 'POST',
+            body: sessionStorage.getItem('assessmentState')
+          })
+          //TODO handle error
+    }
     
 // return a page full of the Survey.JS json that was built in the "surveys" Folder 
     return (
@@ -500,7 +507,9 @@ const Mysurvey = (prop) => {
             <div className="pageNav">
                 {isDetailsPage?
                     <>
-                        <button className="NextPage" onClick={()=> changePage("next")}> Complete </button>
+                        <button className="NextPage" onClick={()=> {
+                            saveAssesmentToDB();
+                            changePage("next")}}> Complete </button>
                     </>
                 :
                 <>
