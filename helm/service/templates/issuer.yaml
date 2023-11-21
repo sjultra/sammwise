@@ -6,10 +6,10 @@ metadata:
   namespace: sammwise
 spec:
   acme:
-    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    server: https://acme-v02.api.letsencrypt.org/directory
     email: {{ .Values.issuer.issuerEmail }}
     privateKeySecretRef:
-      name: {{ .Values.issuer.secretName }}
+      name: {{ .Values.issuer.privateKeyName }}
     solvers:
     - http01:
         ingress:

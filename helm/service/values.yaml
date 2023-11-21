@@ -3,14 +3,16 @@
 ingressHost: https://kubernetes.default.svc
 
 sammwise:
-  image: sjultra/sammwise:latest
+  image: sjultra/sammwise
+  tag: latest
   # port: 80
-  NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/c-m-26nk9h9f/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
-  RANCHER_SERVER: "https://rancher.vzxy.net"
+  # NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/c-m-26nk9h9f/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
+  # RANCHER_SERVER: "https://rancher.vzxy.net"
 
-# issuer:
-#   issuerEmail: ops@sjultra.com
-#   secretName: sammwise-tls-prod
+issuer:
+  issuerEmail: ops@sjultra.com
+  secretName: sammwise-tls-prod
+  privateKeyName: sammwise-tls-pkey-prod
 
-# ingress:
-#  ingressDomain: sammwise.vzxy.net
+ingress:
+ ingressDomain: sammwise.vzxy.net
