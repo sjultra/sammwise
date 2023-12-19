@@ -1,0 +1,23 @@
+  .dropdown ul {
+    list-style: none;
+    padding: unset;
+    margin: unset;
+  }
+  
+  .dropdown ul li {
+    padding: 14px;
+    transition: all linear 0.3s;
+  }
+  
+  
+  .dropdown {
+    z-index: 1;
+    position: relative;
+    display: block;
+    margin-top: -147px;
+    margin-left: -160px;
+    left:150px;
+    top:160px;
+    box-shadow: 0px 5px 5px 2px;
+    transition: all linear 0.3s;
+  }
