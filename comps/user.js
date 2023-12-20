@@ -2,6 +2,7 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import UserDetails from "./userdetails";
+import { getUserData} from "./authorization/middleware";
 
 const User = () => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -20,17 +21,33 @@ const User = () => {
     console.log("Fetch user Data");
     try {
       console.log("get session api");
-      // const resp = await fetch('api/auth/session');
-      const response = await fetch('api/userData');
+      //const resp = await fetch('api/auth/session');
+      const response = getUserData();
       console.log("Response: " + JSON.stringify(response));
-      const result = await response.json();
-      console.log("Result: " + JSON.stringify(result));
+      // const result = await response.json();
+      // console.log("Result: " + JSON.stringify(result));
 
-      setUserData(result);
+      // setUserData(result);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
+
+  // const fetchUserData = async () => {
+  //   console.log("Fetch user Data");
+  //   try {
+  //     console.log("get session api");
+  //     // const resp = await fetch('api/auth/session');
+  //     const response = await fetch('api/userData');
+  //     console.log("Response: " + JSON.stringify(response));
+  //     const result = await response.json();
+  //     console.log("Result: " + JSON.stringify(result));
+
+  //     setUserData(result);
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   }
+  // }
   useEffect(()=>{
     fetchUserData(); 
   },[])

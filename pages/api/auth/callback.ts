@@ -10,7 +10,7 @@ function handleAuthRequest(res, authDataString){
   // console.log("Got: " + authDataString);
   const authDataJson = JSON.parse(authDataString);
   console.log(authDataJson.id_token);
-  return redirect('http://127.0.0.1:3000/?sessionId=sessionId');
+  return redirect(process.env.URL + '/?sessionId=sessionId');
 }
 
 
@@ -18,7 +18,7 @@ function handleAuthRequest(res, authDataString){
 async function  handleGetRequest(req: NextApiRequest, res:NextApiResponse){
   console.log("HandleGetRequest");
   try {
-    await handleAuthCallback(req, res);
+    return await handleAuthCallback(req, res);
   } catch (error) {
     console.error(error);
     res.status(500).end('Internal Server Error');
