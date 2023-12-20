@@ -6,6 +6,7 @@ import { Chart, registerables } from 'chart.js';
 import { Flex, Box } from 'reflexbox'
 // import GaugeChart from 'react-gauge-chart'
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from "next/router";
 import Head from 'next/head'
 import ReactToPrint from 'react-to-print';
 
@@ -17,6 +18,8 @@ import InputFile from '../comps/inputfile';
 import Dataset from '../comps/surveyDisplay/graphs/datasetprops';
 import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
+
+import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
 Chart.register(...registerables);
@@ -76,6 +79,29 @@ const results = () => {
     function reloadPage() {
         location.reload();
     }
+
+
+    const router = useRouter();
+    useEffect(() => {
+        // Check authentication status when the page loads
+        fetch('/api/auth/login')
+          .then((response) => {
+            console.log()
+            if (!response.ok) {
+              console.log("Not logged in!");
+              // Redirect to login page if not authenticated
+              const loginUrl = getDexiDPAuthenticationURL();
+              router.push(loginUrl);
+            }
+            else {
+              console.log("logged in");
+            }
+          })
+          .catch((error) => {
+            console.error('Error checking authentication status:', error);
+            // Handle error appropriately
+          });
+      }, []);
 
     useEffect(() => {
 

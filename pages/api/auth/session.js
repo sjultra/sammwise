@@ -34,7 +34,7 @@ function generateSessionDocument(_sessionId, authToken,_expiration) {
 }
 
 async function handleGETRequests(req, res) {
-    console.log("GET Req cookies: " + req.cookies);
+    console.log("session.js HandleGETRequest w/ cookie: " + req.cookies);
     const sessionId = req.cookies.sessionId;
     console.log("Session ID: " + sessionId);
     if(sessionId === null || sessionId === undefined){
@@ -83,10 +83,8 @@ async function handleGETRequests(req, res) {
 }
 
 async function handlePOSTRequest(req, res) {
-    console.log("handlePOSTRequest");
+    console.log("session.js handlePOSTRequest");
     const body = req.body;
-    console.log("handlePOSTRequest Body: " +body);
-    console.log("handlePOSTRequest typeof: " + typeof body);
     const sessionObject = JSON.parse(body);
     const result = await saveSessionData(sessionObject.sessionId, sessionObject.authToken,sessionObject.expiration);
     console.log("After saveSession");

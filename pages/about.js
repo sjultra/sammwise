@@ -2,9 +2,31 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 import { useEffect } from 'react'
-
+import { useRouter } from 'next/router'
+import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 const About = () => {
-    
+    const router = useRouter();
+    useEffect(() => {
+        // Check authentication status when the page loads
+        fetch('/api/auth/login')
+          .then((response) => {
+            console.log()
+            if (!response.ok) {
+              console.log("Not logged in!");
+              // Redirect to login page if not authenticated
+              const loginUrl = getDexiDPAuthenticationURL();
+              router.push(loginUrl);
+            }
+            else {
+              console.log("logged in");
+            }
+          })
+          .catch((error) => {
+            console.error('Error checking authentication status:', error);
+            // Handle error appropriately
+          });
+      }, []);
+
     useEffect(()=> {
         var userState = JSON.parse(sessionStorage.getItem('userState'));
         userState['page'] = "aboutPage";

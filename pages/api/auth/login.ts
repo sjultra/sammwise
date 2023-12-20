@@ -1,15 +1,23 @@
 async function handleGETRequests(req,res){
+    console.log("login.ts handleGETRequests()");
     const sessionId = req.cookies.sessionId;
-    if(sessionId === null || sessionId === undefined)
-        return res.status(401).json({loggedIn: false});
-    return res.status(200).json({loggedIn: true});
+    console.log("sessionId: " + sessionId);
+    if(sessionId === null || sessionId === undefined){
+        console.log("SessionId is not valid");
+        return res.status(401).send();
+    }
+    return res.status(200).send();
 
 }
 
+export function getAuthenticationURL(){
+    return ""
+}
+
 export default async (req, res) => {
-    console.log("Session API")
+    console.log("Login API")
     if (req.method === 'GET') {
-        console.log("Session API GET");
+        console.log("Login API GET");
         return handleGETRequests(req, res);
     }
     
