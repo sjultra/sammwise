@@ -20,34 +20,16 @@ const User = () => {
   const fetchUserData = async () => {
     console.log("Fetch user Data");
     try {
-      console.log("get session api");
-      //const resp = await fetch('api/auth/session');
-      const response = getUserData();
-      console.log("Response: " + JSON.stringify(response));
-      // const result = await response.json();
-      // console.log("Result: " + JSON.stringify(result));
-
-      // setUserData(result);
+     
+      const response = await getUserData();
+      console.log("user.js UserData Response: " + JSON.stringify(response));
+      setUserData(response);
+     
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
 
-  // const fetchUserData = async () => {
-  //   console.log("Fetch user Data");
-  //   try {
-  //     console.log("get session api");
-  //     // const resp = await fetch('api/auth/session');
-  //     const response = await fetch('api/userData');
-  //     console.log("Response: " + JSON.stringify(response));
-  //     const result = await response.json();
-  //     console.log("Result: " + JSON.stringify(result));
-
-  //     setUserData(result);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // }
   useEffect(()=>{
     fetchUserData(); 
   },[])

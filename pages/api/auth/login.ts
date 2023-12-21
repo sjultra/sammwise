@@ -6,6 +6,7 @@ async function handleGETRequests(req,res){
         console.log("SessionId is not valid");
         return res.status(401).send();
     }
+    //TODO check sessionId is valid
     return res.status(200).send();
 
 }

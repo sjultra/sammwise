@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import styles from '../styles/userdetails.module.css'
 
 const UserDetails = (props) => {
+
+
+  console.log("props.user" + JSON.stringify(props));
+
   if(props.user === null) {
     return (
         <div className={styles.dropdown}>
@@ -17,9 +21,9 @@ const UserDetails = (props) => {
     return (
         <div className={styles.dropdown}>
           <ul>
-            <li>{props.user.userName}</li>
-            <li>{props.user.userEmail}</li>
-            <li>{props.user.rand}</li>
+            <li>{props.user.name}</li>
+            <li>{props.user.email}</li>
+            <li><button>Log Out</button></li>
             {/* <li><button>LogOut</button></li> */}
           </ul>
         </div>

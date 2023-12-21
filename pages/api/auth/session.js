@@ -1,11 +1,11 @@
 import clientPromise from "../../../lib/mongodb";
 
-async function saveSessionData(sessionId, authToken,expiration) {
+async function saveSessionData(sessionId, authToken,expiration,email) {
     console.error("saveSessionData:::::!!!!!!!!!!!");
     try {
         console.log("saveSessionData()");
         // console.log("save session data: " + sessionId + " " + authToken );
-        const doc = generateSessionDocument(sessionId, authToken,expiration);
+        const doc = generateSessionDocument(sessionId, authToken,expiration,email);
         console.log("Session data" + JSON.stringify(doc));
         const client = await clientPromise;
         console.log("Before get DB " + client);
@@ -20,7 +20,7 @@ async function saveSessionData(sessionId, authToken,expiration) {
     }
 }
 
-function generateSessionDocument(_sessionId, authToken,_expiration) {
+function generateSessionDocument(_sessionId, authToken,_expiration,_email) {
     console.log("Generate Doc: " + _sessionId);
     const doc = {
         sessionId: _sessionId,
@@ -28,7 +28,8 @@ function generateSessionDocument(_sessionId, authToken,_expiration) {
         tokenType: authToken.token_type,
         refreshToken: authToken.refresh_token,
         idToken: authToken.id_token,
-        expiration: _expiration
+        expiration: _expiration,
+        email: _email
     }
     return doc;
 }
@@ -46,15 +47,14 @@ async function handleGETRequests(req, res) {
         const client = await clientPromise;
         const db = client.db("SAMMwiseAssesments");
 
-        const query = `{'sessionId : '${sessionId}'}`
-        console.log("Search query: " + query);
+        // const query = `{'sessionId' : '${sessionId}'}`
+        const query = {'sessionId' : sessionId};
+        console.log("Search query: " + JSON.stringify(query));
         const sessionData = await db
             .collection("sessions")
-            .find(query)
-            .limit(1)
-            .toArray();
+            .findOne(query);
 
-        console.log("SessionData" + sessionData);
+        // console.log("SessionData" + JSON.stringify(sessionData));
         return res.status(200).json({loggedIn: true,'sessionData' : sessionData});
 
     } catch (e) {
@@ -86,7 +86,7 @@ async function handlePOSTRequest(req, res) {
     console.log("session.js handlePOSTRequest");
     const body = req.body;
     const sessionObject = JSON.parse(body);
-    const result = await saveSessionData(sessionObject.sessionId, sessionObject.authToken,sessionObject.expiration);
+    const result = await saveSessionData(sessionObject.sessionId, sessionObject.authToken,sessionObject.expiration,sessionObject.email);
     console.log("After saveSession");
     // console.log("After saveSesionData: " + result.insertedId);
     return res.status(200).json(result)/*.send(`document1 was inserted with the _id: ${result.insertedId}`)*/;

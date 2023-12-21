@@ -89,16 +89,19 @@ async function findUserInDatabase(authUserData) {
   const response = await fetch(userAPIURL)
   let userData = {};
   if(response.ok){
-    console.log("response ok");
+    console.log("response ok" + JSON.stringify(response));
     userData = await response.json();
+    console.log("After await json");
+    if(userData.user === null){
+      console.log("User does not exists!");
+      return null;
+    }
     console.log("Found user: " + JSON.stringify(userData));
   }
   else {
     console.log("response not ok");
   }
-  if(Object.keys(userData).length === 0)
-    return null;
-  return userData;
+  return userData.user;
 }
 
 function createUserFromAuthData(authUserData){
@@ -138,8 +141,12 @@ export async function handleAuthCallback(req, res) {
   const authToken = JSON.parse(result.authToken);
   const authTokenString = result.authToken;
   const expirationDate = getSessionExpirationDate();
+
+  const authUserData = await extractAuthUserdata(JSON.parse(result.authToken));
+  console.log("AuthUserData type: " + authUserData);
+
   const sessionAPIURL = process.env.URL + '/api/auth/session';
-  const requestBody = `{"sessionId":"${sessionId}", "authToken":${authTokenString},"expiration":"${expirationDate}"}`;
+  const requestBody = `{"sessionId":"${sessionId}", "authToken":${authTokenString},"expiration":"${expirationDate}","email":"${authUserData.email}"}`;
   console.log("URL: " + sessionAPIURL);
   //save session data: 
   const response = await fetch(sessionAPIURL, {
@@ -149,12 +156,12 @@ export async function handleAuthCallback(req, res) {
 
   console.log("Save sessionData response: " + JSON.stringify(response));
 
-  const authUserData = await extractAuthUserdata(JSON.parse(result.authToken));
-  console.log("AuthUserData type: " + authUserData);
+  
 
 
   const user = await findUserInDatabase(authUserData);
   if (!user) {
+    console.log("No user found! Creating one");
      await createUserInDatabase(authUserData);
   }
 

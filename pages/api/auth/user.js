@@ -56,7 +56,7 @@ async function handleGETRequests(req, res) {
         const userJSON = {
             'user': user
         }
-        console.log("Return: " + JSON.stringify(userJSON));
+        // console.log("Return: " + JSON.stringify(userJSON));
         return res.status(200).send(userJSON);
 
     } catch (e) {

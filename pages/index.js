@@ -2,7 +2,7 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-import { getDexiDPAuthenticationURL, isUserLoggedIn } from '../comps/authorization/authorization'
+import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 import { useRouter } from 'next/router'
 import { parse } from 'cookie'
 
@@ -59,10 +59,9 @@ export default function Home() {
     };
 
     // Call the function on component mount
-    getSessionFromCookie();
+    // getSessionFromCookie();
 
     // console.log("Check logged status!");
-    const isLoggedIn = isUserLoggedIn(sessionStorage);
     // console.log("ISLoggedIn: " + isLoggedIn);
     // if(!isLoggedIn){
     //   console.log("User is not logged in, redirecting to log in page!");
@@ -125,7 +124,6 @@ export default function Home() {
         <meta name="keywords" content="owassp-calc" />
       </Head>
       <div>
-        <button onClick={handleClick}>Login</button>
         <h1 className={styles.title}>SAMMWise</h1>
         <p className={styles.paragraph}>SAMMwise provides a convenient, browser-based interface for capturing SAMM assessment responses. With this tool, users can: </p>
         <li className={styles.paragraph}>	Enter responses for a single assessment</li>
