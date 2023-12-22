@@ -6,11 +6,11 @@ async function saveSessionData(sessionId, authToken,expiration,email) {
         console.log("saveSessionData()");
         // console.log("save session data: " + sessionId + " " + authToken );
         const doc = generateSessionDocument(sessionId, authToken,expiration,email);
-        console.log("Session data" + JSON.stringify(doc));
+        // console.log("Session data" + JSON.stringify(doc));
         const client = await clientPromise;
-        console.log("Before get DB " + client);
+        // console.log("Before get DB " + client);
         const db = client.db("SAMMwiseAssesments");
-        console.log("Before get await insert");
+        // console.log("Before get await insert");
 
         const result = await db.collection("sessions").insertOne(doc);
         console.log("Insert result: " + JSON.stringify(result));
@@ -35,7 +35,7 @@ function generateSessionDocument(_sessionId, authToken,_expiration,_email) {
 }
 
 async function handleGETRequests(req, res) {
-    console.log("session.js HandleGETRequest w/ cookie: " + req.cookies);
+    console.log("session.js HandleGETRequest w/ cookie: " + JSON.stringify(req.cookies));
     const sessionId = req.cookies.sessionId;
     console.log("Session ID: " + sessionId);
     if(sessionId === null || sessionId === undefined){
@@ -55,7 +55,8 @@ async function handleGETRequests(req, res) {
             .findOne(query);
 
         // console.log("SessionData" + JSON.stringify(sessionData));
-        return res.status(200).json({loggedIn: true,'sessionData' : sessionData});
+        const _loggedIn = !(sessionData == null);
+        return res.status(200).json({loggedIn: _loggedIn,'sessionData' : sessionData});
 
     } catch (e) {
         console.error(e);
