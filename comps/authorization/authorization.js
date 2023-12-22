@@ -1,6 +1,6 @@
 import { getSession } from 'next-auth/react';
 
-function isUserLoggedIn(sessionStorage){
+async function isUserLoggedIn(){
     // const session = await getSession({ req });
     console.log("IsLogged In?");
     var sessionId = sessionStorage.getItem('sessionId');
@@ -28,7 +28,7 @@ function generateLink(){
     "?client_id=example-app&redirect_uri=" + 
     redirectURI +
     "&response_type=code&scope=openid+profile+email+offline_access&state=I+wish+to+wash+my+irish+wristwatch";//generate a unique state.
-    console.log("DexiDP redirectURI: " + redirectURI);
+    console.log("DexiDP login URL: " + dexiDPURL);
     return dexiDPURL;
   }
 

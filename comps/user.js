@@ -3,6 +3,8 @@ import React from "react";
 import { useState,useEffect } from "react";
 import UserDetails from "./userdetails";
 import { getUserData} from "./authorization/middleware";
+import styles from '../styles/userdetails.module.css'
+
 
 const User = () => {
     const [isDropdownVisible, setDropdownVisible] = useState(false);
@@ -35,17 +37,11 @@ const User = () => {
   },[])
 
   return (
-    <div className="App">
-      <header className="header">
-        <div
-          className="menu"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <img src="user-data.png" style={{height:25, width:25}}/>
+    <div className={styles.app}
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave}>
+          <img src="user-data.png" id={styles.icon}/>
           {isDropdownVisible && <UserDetails user={userData}/>}
-        </div>
-      </header>
     </div>
   );
 }

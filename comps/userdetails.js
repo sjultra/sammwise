@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styles from '../styles/userdetails.module.css'
+import { useRouter } from "next/router";
+import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
+
 
 const UserDetails = (props) => {
-
-
+  const router = useRouter();
   console.log("props.user" + JSON.stringify(props));
 
-  if(props.user === null) {
+  const logout = async () => {
+    console.log("logout!");
+    await fetch("/api/auth/logout");
+    const dexiDPURL = getDexiDPAuthenticationURL();
+    console.log("Before logout redirect"); 
+    router.push(dexiDPURL);
+  }
+
+  if(props.user === null || props.user === undefined) {
     return (
         <div className={styles.dropdown}>
           <ul>
@@ -23,8 +33,7 @@ const UserDetails = (props) => {
           <ul>
             <li>{props.user.name}</li>
             <li>{props.user.email}</li>
-            <li><button>Log Out</button></li>
-            {/* <li><button>LogOut</button></li> */}
+            <li><button onClick={logout}>Log Out</button></li>
           </ul>
         </div>
       );
