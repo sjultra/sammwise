@@ -4,7 +4,12 @@ async function handleGETRequests(req,res){
     console.log("logout.ts handleGETRequests()");
     const sessionId = req.cookies.sessionId;
     console.log("sessionId: " + sessionId);
-    
+    const sessionAPIURL = process.env.URL + '/api/auth/session';
+    const response = await fetch(sessionAPIURL, {
+        method: 'DELETE',
+        body: sessionId
+      });
+
     const expirationDate = new Date(0);
     res.setHeader(
         'Set-Cookie',

@@ -90,6 +90,31 @@ async function handlePOSTRequest(req, res) {
     console.log("After saveSession");
     // console.log("After saveSesionData: " + result.insertedId);
     return res.status(200).json(result)/*.send(`document1 was inserted with the _id: ${result.insertedId}`)*/;
+}
+
+async function handleDeleteRequest(req,res){
+    console.log("session.js handleDeleteRequest");
+    const sessionId = req.body;
+    console.log("Session ID to delete: " + sessionId);
+
+    try {
+        const client = await clientPromise;
+        const db = client.db("SAMMwiseAssesments");
+
+        // const query = `{'sessionId' : '${sessionId}'}`
+        const query = {'sessionId' : sessionId};
+        console.log("Delete query: " + JSON.stringify(query));
+        const deleteResult = await db
+            .collection("sessions")
+            .deleteOne(query);
+
+        console.log("SessionData" + JSON.stringify(deleteResult));
+        return res.status(200).send();
+
+    } catch (e) {
+        console.error(e);
+        return res.status(400).send({ message: "Something is not working well. Not connected to sammwise db" });
+    }
 
 }
 
@@ -103,7 +128,11 @@ export default async (req, res) => {
         console.log("Session API POST");
         return handlePOSTRequest(req, res);
     }
+    else if (req.method === 'DELETE'){
+        console.log("Session API Delete");
+        return handleDeleteRequest(req,res);
+    }
     else {
-        return res.status(405).send({ message: 'Only POST and GET requests allowed' });
+        return res.status(405).send({ message: 'Only POST, GET and DELETE requests allowed' });
     }
 };

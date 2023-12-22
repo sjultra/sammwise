@@ -27,7 +27,9 @@ export async function getUserData() {
     // console.log("middleware API URL: " + sessionUrl);
     const response = await getSessionData();
   //  console.log("After returning sessionData: " + JSON.stringify(response));
-
+    if( response.sessionData === null){
+      return null;
+    }
     const email = response.sessionData.email;
 
     console.log("UserAPI email: " + email);
