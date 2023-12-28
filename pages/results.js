@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
 // react imports
-import { Radar, Bar } from 'react-chartjs-2';
+import { Radar, Bar, Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
 import { Flex, Box } from 'reflexbox'
 // import GaugeChart from 'react-gauge-chart'
@@ -9,6 +9,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/router";
 import Head from 'next/head'
 import ReactToPrint from 'react-to-print';
+import 'chartjs-adapter-moment';
 
 //local imports
 import DonutGraph from '../comps/surveyDisplay/graphs/donutgraph';
@@ -20,6 +21,7 @@ import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
 
 import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
+import { getUserData } from "../comps/authorization/middleware";
 
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
 Chart.register(...registerables);
@@ -40,13 +42,28 @@ practiceRadar.set_title_text("practice")
 const totalsBarGraph = new Bargraph()
 const bussFuncBarGraph = new Bargraph()
 const practiceBarGraph = new Bargraph()
+const trendsGraph = {}
 const additionalDataset = new Dataset()
 totalsBarGraph.set_aspect_ratio(3)
 bussFuncBarGraph.set_aspect_ratio(1)
 practiceBarGraph.set_aspect_ratio(1)
 var l = ["No", "Yes, for some", "Yes, for most", "Yes, for all"]
 totalsBarGraph.set_labels(l)
-
+// labels = []
+let labels =[];//= ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'];
+let linearData = [];
+// let lineData = {};
+let lineData = {
+                    labels,
+                    datasets: [
+                    {
+                        label: 'Project Name Trends',
+                        data: labels.map(() => Math.floor(Math.random()*5)),
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    },
+                    ],
+                 }
 
 
 var graphObjects = {
@@ -81,6 +98,27 @@ const results = () => {
     }
 
 
+    const options = {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Sammways Line Chart',
+          },
+        },
+        scales: {
+            y: {
+                    max:3.0,
+                    min:0.0
+            }
+        }
+      };
+
+
+
     const router = useRouter();
     useEffect(() => {
         // Check authentication status when the page loads
@@ -103,12 +141,43 @@ const results = () => {
           });
       }, []);
 
+    //   useEffect(async () => {
+    //     const userdata = await getUserData();
+    //     console.log("Got user data in results.js: " + userdata.assesments.length);
+        
+    //     if(userdata.assesments !== null){
+    //         if(userdata.assesments.length === 0){
+    //             console.log("No assesments yet");
+    //             return;
+    //         }
+    //         let asseesmentData = {labels: []};
+    //         userdata.assesments.forEach((assesment) => {
+    //             console.log("Do assesment");
+    //             console.log(JSON.stringify(assesment));
+    //             var testCalc = new assessmentCalculator(assesment.assesment);
+    //             testCalc.computeResults();
+    //             var finalScore = testCalc.overallScore.toFixed(2);
+    //             console.log("Results.js FinalScore: " + finalScore);
+    //             const assesmentDate = assesment.timestamp;
+            
+    //             // asseesmentData.push({x:assesmentDate, y:finalScore});
+    //             asseesmentData.labels.push(assesmentDate);
+    //          })
+    //          console.log("Graph Data: " + JSON.stringify(asseesmentData));
+    //          trendsGraph.labels = asseesmentData.labels;
+    //         }
+        
+    //   }, []);
+
+     
     useEffect(() => {
 
         const sessionData = sessionStorage.getItem('dataResults');
         const previousData = sessionStorage.getItem('prevResults');
         const assessmentSessionStateData = JSON.parse(sessionStorage.getItem('assessmentState'));
 
+
+        console.log()
 
         var answer_values = []
         // fill values array 
@@ -245,7 +314,7 @@ const results = () => {
                     //  }
                 }
                 finalScore[dataNum] = testCalc.overallScore.toFixed(2);
-
+                console.log("Results.js FinalScore: " + finalScore[0]);
                 percentageScore = (finalScore[dataNum] / 3).toFixed(2);
                 // console.log(percentageScore)
 
@@ -253,7 +322,7 @@ const results = () => {
                 //      totalsBarGraph.metaData.datasets[0].data[0] = 0;
                 //  }
 
-                console.log(finalScore[dataNum])
+                console.log("Final Score:" + finalScore[dataNum])
                 console.log(finalScore);
                 companyname = dataENV[dataNum]['Company Name']
                 completionText += " " + companyname
@@ -261,6 +330,62 @@ const results = () => {
                 projectDesc = dataENV[dataNum]["Description of Project"]
                 // }
             }
+
+            // const userdata = await getUserData();
+            // console.log("Got user data in results.js: " + userdata.assesments.length);
+            getUserData().then(async userdata => {
+                if(userdata.assesments !== null){
+                    if(userdata.assesments.length !== 0){
+                    let asseesmentData = {labels: [], data:[]};
+                    await userdata.assesments.forEach((assesment) => {
+                        console.log("Do assesment");
+                        console.log(JSON.stringify(assesment));
+                        var testCalc = new assessmentCalculator(assesment.assesment);
+                        testCalc.computeResults();
+                        var finalScore = testCalc.overallScore.toFixed(2);
+                        console.log("Results.js FinalScore: " + finalScore);
+                        const assesmentDate = assesment.timestamp.substr(0,10);
+                        linearData.push(finalScore);
+                        labels.push(assesmentDate);
+                        // asseesmentData.push({x:assesmentDate, y:finalScore});
+                        // assesmentData.labels.push(finalScore)
+                        // asseesmentData.labels.push(assesmentDate);
+                     })
+                     console.log("Graph Data: " + JSON.stringify(asseesmentData));
+    
+    
+    
+                     lineData = {
+                        labels,
+                        datasets: [
+                        {
+                            label: 'Project Name Trends',
+                            data: labels.map((element, index) => {return linearData.at(index)}),
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        },
+                        ],
+                     }
+                    }
+                    //  trendsGraph.labels = asseesmentData.labels;
+                    //  let labels = assesmentData.labels;
+                    //  lineData = {
+                    //     labels,
+                    //     datasets: [
+                    //     {
+                    //         label: 'Project Name Trends',
+                    //         data: labels.map(() => Math.floor(Math.random()*5)),
+                    //         borderColor: 'rgb(255, 99, 132)',
+                    //         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    //     },
+                    //     ],
+                    //  }
+                }
+            })
+            
+
+
+
             setDisplay(1)
         }
         else {
@@ -269,6 +394,8 @@ const results = () => {
         }
     }, [])
 
+
+    
 
     return (
         <>
@@ -333,6 +460,14 @@ const results = () => {
                         <Box width={[1, 1 / 2]} p={3} className="practicesBarBox">
                             <h2 id="pracbargraph"> Maturity by Practice </h2>
                             <Bar data={practiceBarGraph.metaData} options={practiceBarGraph.layout_props} className='practiceBar' />
+                        </Box>
+                    </Flex>
+                </div>
+                <div label='Trends' className="practices">
+                    <Flex flexWrap='wrap'>
+                        <Box width={[1/2, 1]} p={3} className="practicesBarBox">
+                            <h2 id="trendsgraph"> Project Trends </h2>
+                            <Line className='practiceBar' options={options} data={lineData} />
                         </Box>
                     </Flex>
                 </div>

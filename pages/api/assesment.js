@@ -68,7 +68,7 @@ async function handlePOSTRequests(req,res) {
     console.log("assesment.js after user" + JSON.stringify(user));
 
 
-    user.assesments.push(body);
+    user.assesments.push(doc);
 
     // console.log("assesment.js new user: " + JSON.stringify(user));
 

@@ -24,7 +24,7 @@ const User = () => {
     try {
      
       const response = await getUserData();
-      console.log("user.js UserData Response: " + JSON.stringify(response));
+      // console.log("user.js UserData Response: " + JSON.stringify(response));
       setUserData(response);
      
     } catch (error) {

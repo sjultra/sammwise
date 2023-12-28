@@ -33,7 +33,7 @@ async function handleUPDATERequests(req,res){
                 }
             });
 
-        console.log("User update result: " + JSON.stringify(result));
+        // console.log("User update result: " + JSON.stringify(result));
         return res.status(200).json({'inserted': true});
 
     } catch (e) {
@@ -57,7 +57,7 @@ async function handlePOSTRequests(req,res){
             .collection("users")
             .insertOne(JSON.parse(req.body));
 
-        console.log("User insert result: " + JSON.stringify(result));
+        // console.log("User insert result: " + JSON.stringify(result));
         return res.status(200).json({'inserted': true});
 
     } catch (e) {
@@ -84,12 +84,12 @@ async function handleGETRequests(req, res) {
             .collection("users")
             .findOne(query);
 
-        console.log("User: " + JSON.stringify(user));
+        // console.log("User: " + JSON.stringify(user));
         // res.setHeader('Content-Type', 'application/json');
         const userJSON = {
             'user': user
         }
-        // console.log("Return: " + JSON.stringify(userJSON));
+        console.log("Return: " + JSON.stringify(userJSON));
         return res.status(200).send(userJSON);
 
     } catch (e) {

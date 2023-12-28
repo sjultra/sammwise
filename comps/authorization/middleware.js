@@ -39,7 +39,7 @@ export async function getUserData() {
     console.log("UserAPI URL: " + userAPIURL);
     const result = await fetch(userAPIURL);
     const userData = await result.json();
-    console.log("User Data result: " + JSON.stringify(userData));
+    // console.log("User Data result: " + JSON.stringify(userData));
 
 
     return userData.user;
