@@ -473,12 +473,20 @@ const Mysurvey = (prop) => {
         }
     }
 
-    async function saveAssesmentToDB(){
-        const response = await fetch('/api/assesment', {
+    function saveAssesmentToDB(){
+        let assesment = sessionStorage.getItem('assessmentState');
+        const response = fetch('/api/assesment', {
             method: 'POST',
-            body: sessionStorage.getItem('assessmentState')
+            body: assesment
           })
-          //TODO handle error
+        let userData = JSON.parse(sessionStorage.getItem('userData'));
+        console.log("userData on complete: " + userData);
+        userData.assesments.push({
+            timestamp: new Date(),
+            assesment
+        })
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+    
     }
     
 // return a page full of the Survey.JS json that was built in the "surveys" Folder 

@@ -22,6 +22,7 @@ import SurveyButton from '../comps/buttons/surveybuttons';
 
 import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 import { getUserData } from "../comps/authorization/middleware";
+import TrendsGraph from "../comps/surveyDisplay/graphs/trendgraph";
 
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
 Chart.register(...registerables);
@@ -42,7 +43,7 @@ practiceRadar.set_title_text("practice")
 const totalsBarGraph = new Bargraph()
 const bussFuncBarGraph = new Bargraph()
 const practiceBarGraph = new Bargraph()
-const trendsGraph = {}
+const trendsGraph = new TrendsGraph();
 const additionalDataset = new Dataset()
 totalsBarGraph.set_aspect_ratio(3)
 bussFuncBarGraph.set_aspect_ratio(1)
@@ -50,20 +51,20 @@ practiceBarGraph.set_aspect_ratio(1)
 var l = ["No", "Yes, for some", "Yes, for most", "Yes, for all"]
 totalsBarGraph.set_labels(l)
 // labels = []
-let labels =[];//= ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'];
-let linearData = [];
+// let labels =[];//= ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'];
+// let linearData = [];
 // let lineData = {};
-let lineData = {
-                    labels,
-                    datasets: [
-                    {
-                        label: 'Project Name Trends',
-                        data: labels.map(() => Math.floor(Math.random()*5)),
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    },
-                    ],
-                 }
+// let lineData = {
+//                     labels,
+//                     datasets: [
+//                     {
+//                         label: 'SAMMWise',
+//                         data: labels.map(() => Math.floor(Math.random()*5)),
+//                         borderColor: 'rgb(255, 99, 132)',
+//                         backgroundColor: 'rgba(255, 99, 132, 0.5)',
+//                     },
+//                     ],
+//                  }
 
 
 var graphObjects = {
@@ -98,24 +99,24 @@ const results = () => {
     }
 
 
-    const options = {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          title: {
-            display: true,
-            text: 'Sammways Line Chart',
-          },
-        },
-        scales: {
-            y: {
-                    max:3.0,
-                    min:0.0
-            }
-        }
-      };
+    // const options = {
+    //     responsive: true,
+    //     plugins: {
+    //       legend: {
+    //         position: 'top',
+    //       },
+    //       title: {
+    //         display: true,
+    //         text: 'Sammways Line Chart',
+    //       },
+    //     },
+    //     scales: {
+    //         y: {
+    //                 max:3.0,
+    //                 min:0.0
+    //         }
+    //     }
+    //   };
 
 
 
@@ -331,60 +332,24 @@ const results = () => {
                 // }
             }
 
-            // const userdata = await getUserData();
-            // console.log("Got user data in results.js: " + userdata.assesments.length);
-            getUserData().then(async userdata => {
-                if(userdata.assesments !== null){
-                    if(userdata.assesments.length !== 0){
-                    let asseesmentData = {labels: [], data:[]};
-                    await userdata.assesments.forEach((assesment) => {
-                        console.log("Do assesment");
-                        console.log(JSON.stringify(assesment));
-                        var testCalc = new assessmentCalculator(assesment.assesment);
-                        testCalc.computeResults();
-                        var finalScore = testCalc.overallScore.toFixed(2);
-                        console.log("Results.js FinalScore: " + finalScore);
-                        const assesmentDate = assesment.timestamp.substr(0,10);
-                        linearData.push(finalScore);
-                        labels.push(assesmentDate);
-                        // asseesmentData.push({x:assesmentDate, y:finalScore});
-                        // assesmentData.labels.push(finalScore)
-                        // asseesmentData.labels.push(assesmentDate);
-                     })
-                     console.log("Graph Data: " + JSON.stringify(asseesmentData));
-    
-    
-    
-                     lineData = {
-                        labels,
-                        datasets: [
-                        {
-                            label: 'Project Name Trends',
-                            data: labels.map((element, index) => {return linearData.at(index)}),
-                            borderColor: 'rgb(255, 99, 132)',
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                        },
-                        ],
-                     }
-                    }
-                    //  trendsGraph.labels = asseesmentData.labels;
-                    //  let labels = assesmentData.labels;
-                    //  lineData = {
-                    //     labels,
-                    //     datasets: [
-                    //     {
-                    //         label: 'Project Name Trends',
-                    //         data: labels.map(() => Math.floor(Math.random()*5)),
-                    //         borderColor: 'rgb(255, 99, 132)',
-                    //         backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    //     },
-                    //     ],
-                    //  }
-                }
+            const userData = JSON.parse(sessionStorage.getItem('userData'))
+            let graphData = []
+            let labels = []
+            userData.assesments.forEach((assesment) => {
+                console.log("Do assesment");
+                console.log(JSON.stringify(assesment));
+                var testCalc = new assessmentCalculator(assesment.assesment);
+                testCalc.computeResults();
+                var finalScore = testCalc.overallScore.toFixed(2);
+                console.log("Results.js FinalScore: " + finalScore);
+                const assesmentDate = assesment.timestamp.substr(0,10);
+                graphData.push(finalScore);
+                labels.push(assesmentDate);
+
             })
-            
 
-
+            trendsGraph.metaData.labels = labels;
+            trendsGraph.metaData.datasets[0].data = graphData;
 
             setDisplay(1)
         }
@@ -395,7 +360,7 @@ const results = () => {
     }, [])
 
 
-    
+    console.log("trendsData before render() " + JSON.stringify(trendsGraph))
 
     return (
         <>
@@ -467,7 +432,7 @@ const results = () => {
                     <Flex flexWrap='wrap'>
                         <Box width={[1/2, 1]} p={3} className="practicesBarBox">
                             <h2 id="trendsgraph"> Project Trends </h2>
-                            <Line className='practiceBar' options={options} data={lineData} />
+                            <Line className='practiceBar' options={trendsGraph.options} data={trendsGraph.metaData} />
                         </Box>
                     </Flex>
                 </div>

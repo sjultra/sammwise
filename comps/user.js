@@ -26,6 +26,7 @@ const User = () => {
       const response = await getUserData();
       // console.log("user.js UserData Response: " + JSON.stringify(response));
       setUserData(response);
+      sessionStorage.setItem('userData', JSON.stringify(response));
      
     } catch (error) {
       console.error('Error fetching data:', error);

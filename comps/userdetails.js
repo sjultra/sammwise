@@ -6,7 +6,7 @@ import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization
 
 const UserDetails = (props) => {
   const router = useRouter();
-  console.log("props.user" + JSON.stringify(props));
+  // console.log("props.user" + JSON.stringify(props));
 
   const logout = async () => {
     console.log("logout!");
