@@ -47,22 +47,3 @@ export async function getUserData() {
     console.error('Error fetching data:', error);
   }
 }
-
-
-
-// export async function saveSessionData(){
-//     console.log("Middle ware getUserData");
-//     try {
-//       console.log("get session api");
-//       const resp = await fetch('api/auth/session');
-//     //   const response = await fetch('api/userData');
-
-//       console.log("Response: " + JSON.stringify(response));
-//       const result = await response.json();
-//       console.log("Result: " + JSON.stringify(result));
-
-//       return result;
-//     } catch (error) {
-//       console.error('Error fetching data:', error);
-//     }
-// }

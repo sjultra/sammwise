@@ -7,13 +7,11 @@ import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization
 const About = () => {
     const router = useRouter();
     useEffect(() => {
-        // Check authentication status when the page loads
         fetch('/api/auth/login')
           .then((response) => {
             console.log()
             if (!response.ok) {
               console.log("Not logged in!");
-              // Redirect to login page if not authenticated
               const loginUrl = getDexiDPAuthenticationURL();
               router.push(loginUrl);
             }
@@ -23,7 +21,6 @@ const About = () => {
           })
           .catch((error) => {
             console.error('Error checking authentication status:', error);
-            // Handle error appropriately
           });
       }, []);
 

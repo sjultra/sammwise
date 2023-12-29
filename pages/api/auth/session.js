@@ -4,13 +4,9 @@ async function saveSessionData(sessionId, authToken,expiration,email) {
     console.error("saveSessionData:::::!!!!!!!!!!!");
     try {
         console.log("saveSessionData()");
-        // console.log("save session data: " + sessionId + " " + authToken );
         const doc = generateSessionDocument(sessionId, authToken,expiration,email);
-        // console.log("Session data" + JSON.stringify(doc));
         const client = await clientPromise;
-        // console.log("Before get DB " + client);
         const db = client.db("SAMMwiseAssesments");
-        // console.log("Before get await insert");
 
         const result = await db.collection("sessions").insertOne(doc);
         console.log("Insert result: " + JSON.stringify(result));
@@ -47,14 +43,12 @@ async function handleGETRequests(req, res) {
         const client = await clientPromise;
         const db = client.db("SAMMwiseAssesments");
 
-        // const query = `{'sessionId' : '${sessionId}'}`
         const query = {'sessionId' : sessionId};
         console.log("Search query: " + JSON.stringify(query));
         const sessionData = await db
             .collection("sessions")
             .findOne(query);
 
-        // console.log("SessionData" + JSON.stringify(sessionData));
         const _loggedIn = !(sessionData == null);
         return res.status(200).json({loggedIn: _loggedIn,'sessionData' : sessionData});
 
@@ -62,25 +56,6 @@ async function handleGETRequests(req, res) {
         console.error(e);
         return res.status(400).send({ message: "Something is not working well. Not connected to sammwise db" });
     }
-
-
-    // console.log("Handle session GET requests")
-    // try {
-    //     const client = await clientPromise;
-    //     const db = client.db("SAMMwiseAssesments");
-
-    //     const SAMMwiseAssesments = await db
-    //         .collection("assesments")
-    //         .find({})
-    //         .limit(10)
-    //         .toArray();
-
-    //     return res.status(200).json(SAMMwiseAssesments);
-
-    // } catch (e) {
-    //     console.error(e);
-    //     return res.status(400).send({message: "Something is not working well. Not connected to sammwise db"});
-    // }
 }
 
 async function handlePOSTRequest(req, res) {
@@ -89,8 +64,7 @@ async function handlePOSTRequest(req, res) {
     const sessionObject = JSON.parse(body);
     const result = await saveSessionData(sessionObject.sessionId, sessionObject.authToken,sessionObject.expiration,sessionObject.email);
     console.log("After saveSession");
-    // console.log("After saveSesionData: " + result.insertedId);
-    return res.status(200).json(result)/*.send(`document1 was inserted with the _id: ${result.insertedId}`)*/;
+    return res.status(200).json(result)
 }
 
 async function handleDeleteRequest(req,res){
@@ -102,7 +76,6 @@ async function handleDeleteRequest(req,res){
         const client = await clientPromise;
         const db = client.db("SAMMwiseAssesments");
 
-        // const query = `{'sessionId' : '${sessionId}'}`
         const query = {'sessionId' : sessionId};
         console.log("Delete query: " + JSON.stringify(query));
         const deleteResult = await db

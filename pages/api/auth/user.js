@@ -33,17 +33,12 @@ async function handleUPDATERequests(req,res){
                 }
             });
 
-        // console.log("User update result: " + JSON.stringify(result));
         return res.status(200).json({'inserted': true});
 
     } catch (e) {
         console.error(e);
         return res.status(400).send({ message: "Something is not working well. Not connected to sammwise db" });
-    } finally {
-        // await client.close();
-    }
-
-    return res.status(200).send();
+    } 
 }
 
 async function handlePOSTRequests(req,res){
@@ -57,14 +52,11 @@ async function handlePOSTRequests(req,res){
             .collection("users")
             .insertOne(JSON.parse(req.body));
 
-        // console.log("User insert result: " + JSON.stringify(result));
         return res.status(200).json({'inserted': true});
 
     } catch (e) {
         console.error(e);
         return res.status(400).send({ message: "Something is not working well. Not connected to sammwise db" });
-    } finally {
-        // await client.close();
     }
 }
 
@@ -84,8 +76,6 @@ async function handleGETRequests(req, res) {
             .collection("users")
             .findOne(query);
 
-        // console.log("User: " + JSON.stringify(user));
-        // res.setHeader('Content-Type', 'application/json');
         const userJSON = {
             'user': user
         }
@@ -95,7 +85,5 @@ async function handleGETRequests(req, res) {
     } catch (e) {
         console.error(e);
         return res.status(400).send({ message: "Something is not working well. Not connected to sammwise db" });
-    } finally {
-        // await client.close();
     }
 }

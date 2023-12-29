@@ -16,12 +16,7 @@ async function handleGETRequests(req,res){
         `sessionId="";maxAge=-1; Path=/; HttpOnly; Expires=${expirationDate}`
       );
 
-    //TODO remove session from db
-
     return res.status(200).send();
-
-    // return res.redirect(getDexiDPAuthenticationURL());
-
 }
 
 export default async (req, res) => {

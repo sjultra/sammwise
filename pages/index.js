@@ -1,10 +1,9 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import React, { useState } from 'react'
+import React from 'react'
 import { useEffect } from 'react'
 import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 import { useRouter } from 'next/router'
-import { parse } from 'cookie'
 
 export default function Home() {
   const router = useRouter();
@@ -25,55 +24,10 @@ export default function Home() {
       })
       .catch((error) => {
         console.error('Error checking authentication status:', error);
-        // Handle error appropriately
       });
   }, []);
 
   useEffect(() => {
-    // fetchUserData();
-    const getSessionFromCookie = () => {
-      const cookies = parse(document.cookie);
-      // console.log("Cookies: " + JSON.stringify(cookies));
-      // Check if the "session" cookie exists
-      if (cookies.sessionId) {
-        console.log("Cookie: sessionID is set");
-        // const secret = process.env.JWT_SECRET; // Replace with your JWT secret
-        try {
-          // Verify the JWT token
-          // const decoded = verify(cookies.session, secret);
-
-          // Optionally, you can also check the expiration time or other claims
-
-          // If verification is successful, set isLoggedIn to true
-          // setIsLoggedIn(true);
-          console.log("is logged in")
-        } catch (error) {
-          // Handle verification failure or expired token
-          console.error('Error verifying token:', error);
-          setIsLoggedIn(false);
-        }
-      } else {
-        console.log("No cookie");
-        // setIsLoggedIn(false);
-      }
-    };
-
-    // Call the function on component mount
-    // getSessionFromCookie();
-
-    // console.log("Check logged status!");
-    // console.log("ISLoggedIn: " + isLoggedIn);
-    // if(!isLoggedIn){
-    //   console.log("User is not logged in, redirecting to log in page!");
-    //   //TODO build DEXIDP;
-    //   const dexidpUrl = getDexiDPAuthenticationURL();
-    //   router.push(dexidpUrl);
-
-    // }
-    // else {
-    //   console.log("user is Logged in!");
-    // }
-
     var testStorage = sessionStorage.getItem('assessmentState');
     if (testStorage == null) {
       // Initialise variables to keep track of user state across pages
@@ -109,13 +63,6 @@ export default function Home() {
     statePointer['Project name'] = null;
     statePointer['Description of Project'] = null;
   }
-
-  const handleClick = e => {
-    e.preventDefault()
-    router.push(getDexiDPAuthenticationURL())
-  }
-
-
 
   return (
     <>

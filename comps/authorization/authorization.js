@@ -7,7 +7,6 @@ async function isUserLoggedIn(){
     console.log("SessionId: " + sessionId);
     
     if(sessionId === null || sessionId === undefined){
-        // console.log("SearchParams: " + queryParameters)
         console.log("Return false");
         return false;
         
