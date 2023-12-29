@@ -9,7 +9,7 @@ const http = require("http");
 function handleAuthRequest(res, authDataString){
   const authDataJson = JSON.parse(authDataString);
   console.log(authDataJson.id_token);
-  return redirect(process.env.URL + '/?sessionId=sessionId');
+  return redirect(process.env.NEXT_PUBLIC_URL + '/?sessionId=sessionId');
 }
 
 async function  handleGetRequest(req: NextApiRequest, res:NextApiResponse){

@@ -12,7 +12,7 @@ export default async (req, res) => {
 };
 
 async function getSessionData(sessionId){
-    const sessionAPIURL = process.env.URL + '/api/auth/session';
+    const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
     const sessionData = await fetch(sessionAPIURL,{
         headers: {
             cookie: `sessionId=${sessionId}`
@@ -27,7 +27,7 @@ async function getUserData(sessionId){
     console.log("assesment.js sessiondata " + sessionData);
     console.log("assesment.js SessionData Email: " + sessionData.sessionData.email);
     const email = sessionData.sessionData.email;
-    const userAPIURL = process.env.URL + '/api/auth/user?'  + new URLSearchParams({ email });
+    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user?'  + new URLSearchParams({ email });
     console.log("UserAPIURL" +  userAPIURL);
     const userDataResponse = await fetch(userAPIURL);
     let userData = await userDataResponse.json();
@@ -38,7 +38,7 @@ async function getUserData(sessionId){
 async function updateUser(user){
     console.log("assesment.js updateUser:");
 
-    const userAPIURL = process.env.URL + '/api/auth/user'
+    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user'
     console.log("UserAPIURL: " + userAPIURL);
     const updateResult = await fetch(userAPIURL, {
         method: 'PUT',

@@ -6,7 +6,7 @@ async function handleGETRequests(req,res){
         console.log("SessionId is not valid");
         return res.status(401).send();
     }
-    const sessionAPIURL = process.env.URL + '/api/auth/session';
+    const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
     const sessionData = await fetch(sessionAPIURL,{
         headers: {
             cookie: `sessionId=${sessionId}`

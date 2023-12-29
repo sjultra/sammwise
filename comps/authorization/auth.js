@@ -5,23 +5,38 @@ import { decode } from 'next-auth/jwt'
 // import { authenticateUser } from './user-authentication'; // Replace with your user authentication logic
 var http = require('http');
 function getRequestBody(code) {
-  return "code=" + code + "&grant_type=authorization_code&redirect_uri=http://127.0.0.1:3000/api/auth/callback";//TODO get this from env variables
+  
+  return "code=" + code + "&grant_type=authorization_code&redirect_uri="+process.env.NEXT_PUBLIC_URL+"/api/auth/callback";
+}
+
+function getAuthorizationData(){
+  const appName = process.env.DEX_APP_NAME;
+  const secret = process.env.DEX_SECRET;
+  const authString = appName+":"+secret;
+  console.log("Decoded authString: " + authString);
+  let buff = new Buffer(authString);
+  let base64data = buff.toString('base64');
+
+  // console.log("Base64 authorization data: " + base64data);
+  // console.log("Original base64 auth data: " + "ZXhhbXBsZS1hcHA6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw");
+  return base64data;
 }
 
 async function requestAuthToken(code) {
   return new Promise((resolve, request) => {
     const requestBody = getRequestBody(code);
-    console.log("request Body: " + requestBody);
+    // console.log("request Body: " + requestBody);
+    console.log("In Promise/: " + process.env.DEX_APP_NAME);
     //TODO move this into a dedicated function which will return the idToken. Then saves the relevant part to db 
     const options = {
-      hostname: '127.0.0.1',
+      hostname: process.env.HOSTNAME,
       port: 5556,
       path: '/dex/token',
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept-Encoding': 'application/gzip',
-        'Authorization': 'Basic ZXhhbXBsZS1hcHA6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw', //this is the client secret and the client name base64 encoded
+        'Authorization': 'Basic '+getAuthorizationData(), //this is the client secret and the client name base64 encoded
         'Content-Length': requestBody.length
       }
     }
@@ -37,7 +52,7 @@ async function requestAuthToken(code) {
           body = body + d;
         });
         resp.on('end', () => {
-          console.log("Body: " + body);
+          // console.log("Body: " + body);
           resolve(body);
           // return handleAuthRequest(res, body);
         })
@@ -72,19 +87,19 @@ function decodeBase64(data) {
 
 async function extractAuthUserdata(authToken) {
   console.log("extractAuthUserdata()");
-  console.log("AuthToken: " + JSON.stringify(authToken));
+  // console.log("AuthToken: " + JSON.stringify(authToken));
   const idToken = authToken.id_token;
   const tokens = idToken.split(".");
-  console.log("IDToken: " + idToken);
+  // console.log("IDToken: " + idToken);
   const plainData = decodeBase64(tokens[1]);
-  console.log("Decoded JWT: " + plainData);
+  // console.log("Decoded JWT: " + plainData);
   return JSON.parse(plainData);
 }
 
 async function findUserInDatabase(authUserData) {
   console.log("Find user in database");
   const email = authUserData.email;
-  const userAPIURL = process.env.URL + '/api/auth/user?' + new URLSearchParams({ email });
+  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user?' + new URLSearchParams({ email });
   console.log("Fetch url: " + userAPIURL);
   const response = await fetch(userAPIURL)
   let userData = {};
@@ -96,7 +111,6 @@ async function findUserInDatabase(authUserData) {
       console.log("User does not exists!");
       return null;
     }
-    console.log("Found user: " + JSON.stringify(userData));
   }
   else {
     console.log("response not ok");
@@ -115,7 +129,7 @@ function createUserFromAuthData(authUserData){
 
 async function createUserInDatabase(authUserData) {
   console.log("createUserInDatabase");
-  const userAPIURL = process.env.URL + '/api/auth/user';
+  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user';
   const user = createUserFromAuthData(authUserData);
   const response = await fetch(userAPIURL, {
     method: 'POST',
@@ -129,7 +143,7 @@ export async function handleAuthCallback(req, res) {
 
   console.log("Before handleCallback");
   const result = await handleDexAuthCallback(req);
-  console.log("After handleDexAuthCallback. result: " + JSON.stringify(result));
+  // console.log("After handleDexAuthCallback. result: " + JSON.stringify(result));
 
   // Set session ID or update user information in the session
   if (!result.success) {
@@ -145,7 +159,7 @@ export async function handleAuthCallback(req, res) {
   const authUserData = await extractAuthUserdata(JSON.parse(result.authToken));
   console.log("AuthUserData type: " + authUserData);
 
-  const sessionAPIURL = process.env.URL + '/api/auth/session';
+  const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
   const requestBody = `{"sessionId":"${sessionId}", "authToken":${authTokenString},"expiration":"${expirationDate}","email":"${authUserData.email}"}`;
   console.log("URL: " + sessionAPIURL);
   //save session data: 
@@ -184,7 +198,7 @@ export async function handleDexAuthCallback(req) {
 
     // Exchange the authorization code for an access token
     const authToken = await requestAuthToken(code);
-    console.log("AuthToken: " + authToken);
+    // console.log("AuthToken: " + authToken);
     // // Use the access token to get user information from DexiDP
     // const auth = await getUserInfo(authToken);
 
@@ -204,45 +218,45 @@ export async function handleDexAuthCallback(req) {
   }
 }
 
-async function exchangeCodeForAccessToken(code) {
-  const tokenEndpoint = 'http://127.0.0.1:5556/dex/token'; // Replace with the actual DexiDP token endpoint
-  const clientId = 'example-app'; // Replace with your client ID
-  const clientSecret = 'ZXhhbXBsZS1hcHAtc2VjcmV0'; // Replace with your client secret
-  const redirectUri = 'http://127.0.0.1:3000/api/auth/callback'; // Replace with your redirect URI
+// async function exchangeCodeForAccessToken(code) {
+//   const tokenEndpoint = 'http://127.0.0.1:5556/dex/token'; // Replace with the actual DexiDP token endpoint
+//   const clientId = 'example-app'; // Replace with your client ID
+//   const clientSecret = 'ZXhhbXBsZS1hcHAtc2VjcmV0'; // Replace with your client secret
+//   const redirectUri = 'http://127.0.0.1:3000/api/auth/callback'; // Replace with your redirect URI
 
-  const requestBody = {
-    grant_type: 'authorization_code',
-    code,
-    redirect_uri: redirectUri,
-    client_id: clientId,
-    client_secret: clientSecret,
-  };
+//   const requestBody = {
+//     grant_type: 'authorization_code',
+//     code,
+//     redirect_uri: redirectUri,
+//     client_id: clientId,
+//     client_secret: clientSecret,
+//   };
 
-  const response = await fetch(tokenEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams(requestBody).toString(),
-  });
+//   const response = await fetch(tokenEndpoint, {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/x-www-form-urlencoded',
+//     },
+//     body: new URLSearchParams(requestBody).toString(),
+//   });
 
-  if (!response.ok) {
-    throw new Error('Failed to exchange code for access token');
-  }
-  console.log("Response from POST: " + response);
-  const responseBody = await response.json();
-  const accessToken = responseBody.access_token;
+//   if (!response.ok) {
+//     throw new Error('Failed to exchange code for access token');
+//   }
+//   console.log("Response from POST: " + response);
+//   const responseBody = await response.json();
+//   const accessToken = responseBody.access_token;
 
-  return accessToken;
-}
+//   return accessToken;
+// }
 
-async function getUserInfo(jsonData) {
-  console.log("getUserInfo: " + jsonData);
-  const jsonObject = JSON.parse(jsonData);
-  const idToken = jsonObject.id_token;
-  console.log("IDToken: " + idToken);
-  return jsonObject;
-  // Implement the logic to get user information from DexiDP using the access token
-  // This may involve making a request to DexiDP userinfo endpoint
-  // Return the user information
-}
+// async function getUserInfo(jsonData) {
+//   console.log("getUserInfo: " + jsonData);
+//   const jsonObject = JSON.parse(jsonData);
+//   const idToken = jsonObject.id_token;
+//   console.log("IDToken: " + idToken);
+//   return jsonObject;
+//   // Implement the logic to get user information from DexiDP using the access token
+//   // This may involve making a request to DexiDP userinfo endpoint
+//   // Return the user information
+// }
