@@ -28,7 +28,7 @@ export default async (req, res) => {
     }
 
 
-    if(result.ok){
+    if(result.deletedCount){
         console.log("deleteSessions.js session was deleted");
     }
     else {
