@@ -1,6 +1,3 @@
-import { getSession } from 'next-auth/react';
-import { redirect } from 'next/navigation';
-require('dotenv').config();
 async function isUserLoggedIn(){
     // const session = await getSession({ req });
     console.log("IsLogged In?");

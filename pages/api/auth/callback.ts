@@ -1,16 +1,5 @@
-import { redirect } from 'next/navigation';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getSession } from 'next-auth/react';
 import {handleAuthCallback } from '../../../comps/authorization/auth'
-require('dotenv').config();
-const http = require("http");
-
-
-function handleAuthRequest(res, authDataString){
-  const authDataJson = JSON.parse(authDataString);
-  console.log(authDataJson.id_token);
-  return redirect(process.env.NEXT_PUBLIC_URL + '/?sessionId=sessionId');
-}
 
 async function  handleGetRequest(req: NextApiRequest, res:NextApiResponse){
   console.log("HandleGetRequest");

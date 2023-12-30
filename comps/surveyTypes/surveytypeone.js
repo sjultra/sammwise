@@ -473,18 +473,24 @@ const Mysurvey = (prop) => {
         }
     }
 
-    function saveAssesmentToDB(){
-        let assesment = sessionStorage.getItem('assessmentState');
-        const response = fetch('/api/assesment', {
-            method: 'POST',
-            body: assesment
+    async function saveAssesmentToDB(){
+        let assesmentString = sessionStorage.getItem('assessmentState');
+        const assesment = JSON.parse(assesmentString);
+        const response = await fetch('/api/user/updateUserAssesments', {
+            method: 'PUT',
+            body: JSON.stringify({timestamp: new Date(),assesment})
           })
-        let userData = JSON.parse(sessionStorage.getItem('userData'));
-        console.log("userData on complete: " + userData);
-        userData.assesments.push({
-            timestamp: new Date(),
-            assesment
-        })
+        if(!response.ok){
+            return;
+        }
+        console.log("SaveAssesmentToDB response ok!");
+        const userData = await response.json();
+        // let userData = JSON.parse(sessionStorage.getItem('userData'));
+        console.log("userData on complete: " + JSON.stringify(userData));
+        // userData.assesments.push({
+        //     timestamp: new Date(),
+        //     assesment
+        // })
         sessionStorage.setItem('userData', JSON.stringify(userData));
     
     }
