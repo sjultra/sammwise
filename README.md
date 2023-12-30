@@ -57,6 +57,64 @@ Requires docker and docker-compose on the source system.
 `docker-compose up`
 
 ### Node
+This requires a Dex(https://dexidp.io/) instance to run locally.  Details on how to run a Dex instance can be found on their website. Below is an example on how a Dex configuration should look like.
+
+```
+# This is the canonical URL that all clients MUST use to refer to dex. If a
+# path is provided, dex's HTTP service will listen at a non-root URL.
+issuer: http://127.0.0.1:5556/dex
+
+# See the documentation (https://dexidp.io/docs/storage/) for further information.
+storage:
+  type: sqlite3
+  config:
+    file: examples/dex.db
+
+# Configuration for the HTTP endpoints.
+web:
+  http: 0.0.0.0:5556
+  # Uncomment for HTTPS options.
+  # https: 127.0.0.1:5554
+  # tlsCert: /etc/dex/tls.crt
+  # tlsKey: /etc/dex/tls.key
+
+# Configuration for telemetry
+telemetry:
+  http: 0.0.0.0:5558
+
+staticClients:
+- id: SAMMWise
+  redirectURIs:
+  - 'http://127.0.0.1:3000/api/auth/callback'
+  name: 'SAMMWise'
+  secret: INSERT_DEX_SECRET
+
+connectors:
+- type: google
+  id: google
+  name: Google
+  config:
+    issuer: https://accounts.google.com
+    # Connector config values starting with a "$" will read from the environment.
+    #clientID and clientSecret are obtainable from the google Console Project Settings
+    #TODO: set the below via env variables $
+    clientID: 'GOOGLE CLIENT ID'
+    clientSecret: 'GOOGLE SECRET ID'
+    redirectURI: 'http://127.0.0.1:5556/dex/callback'
+
+# Let dex keep a list of passwords which can be used to login to dex.
+enablePasswordDB: false
+```
+
+Also you need to have a .env.local file present to configure the environmental variables for the node app. Example:
+```
+MONGODB_URI= *Here should be a link for a mongoDB database"
+NEXT_PUBLIC_URL="http://127.0.0.1:3000"
+NEXT_PUBLIC_DEX_URL="http://127.0.0.1:5556"
+HOSTNAME="127.0.0.1"
+DEX_APP_NAME="SAMMWise"
+DEX_SECRET="Insert Dex Secret Here. This needs to match the one set in the dex config"
+```
 
 Requires npm 10.3 or higher to run.
 First pull down the required dependencies
