@@ -21,7 +21,6 @@ import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
 
 import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
-import { getUserData } from "../comps/authorization/middleware";
 import TrendsGraph from "../comps/surveyDisplay/graphs/trendgraph";
 
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
@@ -123,7 +122,7 @@ const results = () => {
     const router = useRouter();
     useEffect(() => {
         // Check authentication status when the page loads
-        fetch('/api/auth/login')
+        fetch('/api/session/getSessionData')
           .then((response) => {
             console.log()
             if (!response.ok) {

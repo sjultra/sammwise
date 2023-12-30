@@ -12,6 +12,7 @@ export default async (req, res) => {
 };
 
 async function getSessionData(sessionId){
+    console.log("Assesment.js get SessionData!");
     const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
     const sessionData = await fetch(sessionAPIURL,{
         headers: {
@@ -27,12 +28,16 @@ async function getUserData(sessionId){
     console.log("assesment.js sessiondata " + sessionData);
     console.log("assesment.js SessionData Email: " + sessionData.sessionData.email);
     const email = sessionData.sessionData.email;
-    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user?'  + new URLSearchParams({ email });
+    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/getUserByEmail?'  + new URLSearchParams({ email });
     console.log("UserAPIURL" +  userAPIURL);
-    const userDataResponse = await fetch(userAPIURL);
-    let userData = await userDataResponse.json();
-    console.log("assesment.js before return");
-    return userData.user;
+    const response = await fetch(userAPIURL);
+
+    if(!response.ok){
+        return null;
+    }
+
+    let userData = await response.json();
+    return userData;
 }
 
 async function updateUser(user){

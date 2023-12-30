@@ -2,7 +2,6 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import UserDetails from "./userdetails";
-import { getUserData} from "./authorization/middleware";
 import styles from '../styles/userdetails.module.css'
 
 
@@ -22,11 +21,17 @@ const User = () => {
   const fetchUserData = async () => {
     console.log("Fetch user Data");
     try {
-     
-      const response = await getUserData();
-      // console.log("user.js UserData Response: " + JSON.stringify(response));
-      setUserData(response);
-      sessionStorage.setItem('userData', JSON.stringify(response));
+      console.log("Before await fetch getUserData.js");
+      const response = await fetch("/api/user/getUserData");
+      if(response.ok){
+        const userJSON = await response.json();
+        console.log("user.js UserData Response: " + JSON.stringify(userJSON));
+        setUserData(userJSON);
+        sessionStorage.setItem('userData', JSON.stringify(userJSON));
+      }
+      else {
+        setUserData(null);
+      }
      
     } catch (error) {
       console.error('Error fetching data:', error);

@@ -94,11 +94,12 @@ async function handleDeleteRequest(req,res){
 
 export default async (req, res) => {
     console.log("Session API")
-    if (req.method === 'GET') {
-        console.log("Session API GET");
-        return handleGETRequests(req, res);
-    }
-    else if (req.method === 'POST') {
+    // if (req.method === 'GET') {
+    //     console.log("Session API GET");
+    //     return handleGETRequests(req, res);
+    // }
+    // else 
+    if (req.method === 'POST') {
         console.log("Session API POST");
         return handlePOSTRequest(req, res);
     }
@@ -107,6 +108,7 @@ export default async (req, res) => {
         return handleDeleteRequest(req,res);
     }
     else {
+        console.error("GET AND PUT NOT Supported!");
         return res.status(405).send({ message: 'Only POST, GET and DELETE requests allowed' });
     }
 };

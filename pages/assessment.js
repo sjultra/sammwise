@@ -17,7 +17,7 @@ export default function SAMMsurvey(){
     const router = useRouter()
 
     useEffect(() => {
-        fetch('/api/auth/login')
+      fetch('/api/session/getSessionData')
           .then((response) => {
             console.log()
             if (!response.ok) {

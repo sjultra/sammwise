@@ -9,7 +9,7 @@ export default function Home() {
   const router = useRouter();
   useEffect(() => {
     // Check authentication status when the page loads
-    fetch('/api/auth/login')
+    fetch('/api/session/getSessionData')
       .then((response) => {
         console.log()
         if (!response.ok) {

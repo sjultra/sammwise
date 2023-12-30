@@ -7,7 +7,7 @@ import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization
 const About = () => {
     const router = useRouter();
     useEffect(() => {
-        fetch('/api/auth/login')
+        fetch('/api/session/getSessionData')
           .then((response) => {
             console.log()
             if (!response.ok) {

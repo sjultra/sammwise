@@ -10,7 +10,7 @@ const UserDetails = (props) => {
 
   const logout = async () => {
     console.log("logout!");
-    await fetch(process.env.NEXT_PUBLIC_DEX_URL+"/api/auth/logout");
+    await fetch(process.env.HOSTNAME+"/api/auth/logout");
     const dexiDPURL = getDexiDPAuthenticationURL();
     console.log("Before logout redirect"); 
     router.push(dexiDPURL);
