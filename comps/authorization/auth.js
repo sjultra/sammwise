@@ -10,14 +10,15 @@ function getRequestBody(code) {
 }
 
 function getAuthorizationData(){
-  const appName = process.env.DEX_APP_NAME;
+  const appName = process.env.NEXT_PUBLIC_DEX_APP_NAME;
   const secret = process.env.DEX_SECRET;
   const authString = appName+":"+secret;
   console.log("Decoded authString: " + authString);
   let buff = new Buffer(authString);
   let base64data = buff.toString('base64');
 
-  // console.log("Base64 authorization data: " + base64data);
+  console.log("Base64 authorization data: " + base64data);
+  //U0FNTVdpc2U6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw
   // console.log("Original base64 auth data: " + "ZXhhbXBsZS1hcHA6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw");
   return base64data;
 }
@@ -26,7 +27,7 @@ async function requestAuthToken(code) {
   return new Promise((resolve, request) => {
     const requestBody = getRequestBody(code);
     // console.log("request Body: " + requestBody);
-    console.log("In Promise/: " + process.env.DEX_APP_NAME);
+    console.log("In Promise/: " + process.env.NEXT_PUBLIC_DEX_APP_NAME);
     //TODO move this into a dedicated function which will return the idToken. Then saves the relevant part to db 
     const options = {
       hostname: process.env.HOSTNAME,
@@ -87,7 +88,7 @@ function decodeBase64(data) {
 
 async function extractAuthUserdata(authToken) {
   console.log("extractAuthUserdata()");
-  // console.log("AuthToken: " + JSON.stringify(authToken));
+  console.log("AuthToken: " + JSON.stringify(authToken));
   const idToken = authToken.id_token;
   const tokens = idToken.split(".");
   // console.log("IDToken: " + idToken);
