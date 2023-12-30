@@ -2,31 +2,31 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import React from 'react'
 import { useEffect } from 'react'
-import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 import { useRouter } from 'next/router'
+import { isAuthenticated } from '../lib/auth'
+import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
+
+export const getServerSideProps = async (context) => {
+  const user = await isAuthenticated(context.req);
+
+  if (!user) {
+    return {
+      redirect: {
+        destination: getDexiDPAuthenticationURL(),
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      user,
+    },
+  };
+};
+
 
 export default function Home() {
-  const router = useRouter();
-  useEffect(() => {
-    // Check authentication status when the page loads
-    fetch('/api/session/getSessionData')
-      .then((response) => {
-        console.log()
-        if (!response.ok) {
-          console.log("Not logged in!");
-          // Redirect to login page if not authenticated
-          const loginUrl = getDexiDPAuthenticationURL();
-          router.push(loginUrl);
-        }
-        else {
-          console.log("logged in");
-        }
-      })
-      .catch((error) => {
-        console.error('Error checking authentication status:', error);
-      });
-  }, []);
-
   useEffect(() => {
     var testStorage = sessionStorage.getItem('assessmentState');
     if (testStorage == null) {

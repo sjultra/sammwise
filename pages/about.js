@@ -2,28 +2,29 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 import { useEffect } from 'react'
-import { useRouter } from 'next/router'
 import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
-const About = () => {
-    const router = useRouter();
-    useEffect(() => {
-        fetch('/api/session/getSessionData')
-          .then((response) => {
-            console.log()
-            if (!response.ok) {
-              console.log("Not logged in!");
-              const loginUrl = getDexiDPAuthenticationURL();
-              router.push(loginUrl);
-            }
-            else {
-              console.log("logged in");
-            }
-          })
-          .catch((error) => {
-            console.error('Error checking authentication status:', error);
-          });
-      }, []);
+import { isAuthenticated } from '../lib/auth'
 
+export const getServerSideProps = async (context) => {
+    const user = await isAuthenticated(context.req);
+  
+    if (!user) {
+      return {
+        redirect: {
+          destination: getDexiDPAuthenticationURL(),
+          permanent: false,
+        },
+      };
+    }
+  
+    return {
+      props: {
+        user,
+      },
+    };
+  };
+
+const About = () => {
     useEffect(()=> {
         var userState = JSON.parse(sessionStorage.getItem('userState'));
         userState['page'] = "aboutPage";

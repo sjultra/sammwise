@@ -10,6 +10,8 @@ import { useRouter } from "next/router";
 import Head from 'next/head'
 import ReactToPrint from 'react-to-print';
 import 'chartjs-adapter-moment';
+import { isAuthenticated } from '../lib/auth'
+
 
 //local imports
 import DonutGraph from '../comps/surveyDisplay/graphs/donutgraph';
@@ -84,11 +86,26 @@ function saveText(text, filename) {
 }
 
 
+export const getServerSideProps = async (context) => {
+    const user = await isAuthenticated(context.req);
+  
+    if (!user) {
+      return {
+        redirect: {
+          destination: getDexiDPAuthenticationURL(),
+          permanent: false,
+        },
+      };
+    }
+  
+    return {
+      props: {
+        user,
+      },
+    };
+};
 
 const results = () => {
-
-
-
     const [display, setDisplay] = useState(0)
     const [showPrevious, setShowPrevious] = useState(false)
     const componentRef = useRef();
@@ -96,79 +113,6 @@ const results = () => {
     function reloadPage() {
         location.reload();
     }
-
-
-    // const options = {
-    //     responsive: true,
-    //     plugins: {
-    //       legend: {
-    //         position: 'top',
-    //       },
-    //       title: {
-    //         display: true,
-    //         text: 'Sammways Line Chart',
-    //       },
-    //     },
-    //     scales: {
-    //         y: {
-    //                 max:3.0,
-    //                 min:0.0
-    //         }
-    //     }
-    //   };
-
-
-
-    const router = useRouter();
-    useEffect(() => {
-        // Check authentication status when the page loads
-        fetch('/api/session/getSessionData')
-          .then((response) => {
-            console.log()
-            if (!response.ok) {
-              console.log("Not logged in!");
-              // Redirect to login page if not authenticated
-              const loginUrl = getDexiDPAuthenticationURL();
-              router.push(loginUrl);
-            }
-            else {
-              console.log("logged in");
-            }
-          })
-          .catch((error) => {
-            console.error('Error checking authentication status:', error);
-            // Handle error appropriately
-          });
-      }, []);
-
-    //   useEffect(async () => {
-    //     const userdata = await getUserData();
-    //     console.log("Got user data in results.js: " + userdata.assesments.length);
-        
-    //     if(userdata.assesments !== null){
-    //         if(userdata.assesments.length === 0){
-    //             console.log("No assesments yet");
-    //             return;
-    //         }
-    //         let asseesmentData = {labels: []};
-    //         userdata.assesments.forEach((assesment) => {
-    //             console.log("Do assesment");
-    //             console.log(JSON.stringify(assesment));
-    //             var testCalc = new assessmentCalculator(assesment.assesment);
-    //             testCalc.computeResults();
-    //             var finalScore = testCalc.overallScore.toFixed(2);
-    //             console.log("Results.js FinalScore: " + finalScore);
-    //             const assesmentDate = assesment.timestamp;
-            
-    //             // asseesmentData.push({x:assesmentDate, y:finalScore});
-    //             asseesmentData.labels.push(assesmentDate);
-    //          })
-    //          console.log("Graph Data: " + JSON.stringify(asseesmentData));
-    //          trendsGraph.labels = asseesmentData.labels;
-    //         }
-        
-    //   }, []);
-
      
     useEffect(() => {
 
