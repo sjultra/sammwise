@@ -15,4 +15,4 @@ issuer:
   privateKeyName: sammwise-tls-pkey-prod
 
 ingress:
- ingressDomain: sammwise.vzxy.net
+  ingressDomain: sammwise.vzxy.net
