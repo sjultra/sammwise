@@ -1,9 +1,11 @@
 import clientPromise from "../../lib/mongodb";
 export default async (req, res) => {
     if (req.method === 'POST') {
+        console.log("Assesment POST");
         return handlePOSTRequests(req,res);
     }
     else if(req.method === 'GET'){
+        console.log("Assesment GET");
         return handleGETRequests(req,res);
     }
     else {
@@ -13,7 +15,7 @@ export default async (req, res) => {
 
 async function getSessionData(sessionId){
     console.log("Assesment.js get SessionData!");
-    const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
+    const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/session/getSessionData';
     const sessionData = await fetch(sessionAPIURL,{
         headers: {
             cookie: `sessionId=${sessionId}`
@@ -25,9 +27,9 @@ async function getSessionData(sessionId){
 
 async function getUserData(sessionId){
     const sessionData = await getSessionData(sessionId);
-    console.log("assesment.js sessiondata " + sessionData);
-    console.log("assesment.js SessionData Email: " + sessionData.sessionData.email);
-    const email = sessionData.sessionData.email;
+    console.log("assesment.js sessiondata " + JSON.stringify(sessionData));
+    console.log("assesment.js SessionData Email: " + sessionData.email);
+    const email = sessionData.email;
     const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/getUserByEmail?'  + new URLSearchParams({ email });
     console.log("UserAPIURL" +  userAPIURL);
     const response = await fetch(userAPIURL);
@@ -43,7 +45,7 @@ async function getUserData(sessionId){
 async function updateUser(user){
     console.log("assesment.js updateUser:");
 
-    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user'
+    const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/updateUserAssesments'
     console.log("UserAPIURL: " + userAPIURL);
     const updateResult = await fetch(userAPIURL, {
         method: 'PUT',

@@ -18,7 +18,10 @@ export default async function handler(req, res) {
             .collection("sessions")
             .findOne(query);
 
-        // console.log("GetSessioNdata.js SessionData: " + JSON.stringify(sessionData));
+        if(sessionData === null){
+            return res.status(404).send("Not found!");
+        }
+        console.log("GetSessioNdata.js SessionData: " + JSON.stringify(sessionData));
         console.log("GetSessioNData.js returned ok response!");
         return res.status(200).json(sessionData);
 

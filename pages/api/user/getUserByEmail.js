@@ -1,4 +1,4 @@
-import {clientPromise} from "../../../lib/mongodb"
+import clientPromise from "../../../lib/mongodb"
 export default async function handler(req, res) {
     console.log("getUserByEmail API!");
     if (req.method !== 'GET') {
@@ -11,22 +11,21 @@ export default async function handler(req, res) {
         const db = client.db("SAMMwiseAssesments");
 
         const query = { email }
-        console.log("Search query: " + JSON.stringify(query));
+        console.log("getUserByEmail Search query: " + JSON.stringify(query));
         const user = await db
             .collection("users")
             .findOne(query);
 
         if (!user) {
+            console.log ("getUserByEmail USER NOT FOUND!")
             return res.status(404).json({ message: 'User not found' });
         }
+        console.log ("getUserByEmail user Found!")
 
-        res.status(200).json(user);
+        return res.status(200).json(user);
 
     } catch (e) {
         console.error(e);
         return { message: "getUserEmail Something is not working well. Not connected to sammwise db" };
     }
-
-
-    res.status(200).json(user);
 }

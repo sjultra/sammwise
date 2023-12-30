@@ -20,7 +20,7 @@ export default async function handler(req, res) {
         console.log("getUserData: response ok");
         const sessionData = await response.json();
 
-        // console.log("getUserData.js sessionData: " + JSON.stringify(sessionData));
+        console.log("getUserData.js sessionData: " + JSON.stringify(sessionData));
         const email = sessionData.email;
         console.log("getUserData.js email: " + email);
 

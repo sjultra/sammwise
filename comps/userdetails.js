@@ -10,7 +10,9 @@ const UserDetails = (props) => {
 
   const logout = async () => {
     console.log("logout!");
-    await fetch(process.env.HOSTNAME+"/api/auth/logout");
+    await fetch("/api/session/deleteSession",{
+      method:"DELETE"
+    });
     const dexiDPURL = getDexiDPAuthenticationURL();
     console.log("Before logout redirect"); 
     router.push(dexiDPURL);

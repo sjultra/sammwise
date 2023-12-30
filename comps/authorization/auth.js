@@ -1,18 +1,14 @@
 import crypto from "crypto";
-import { clientPromise } from '../../lib/mongodb'
-import { saveSessionData } from '../../pages/api/auth/session'
-import { decode } from 'next-auth/jwt'
-// import { authenticateUser } from './user-authentication'; // Replace with your user authentication logic
 var http = require('http');
 function getRequestBody(code) {
-  
-  return "code=" + code + "&grant_type=authorization_code&redirect_uri="+process.env.NEXT_PUBLIC_URL+"/api/auth/callback";
+
+  return "code=" + code + "&grant_type=authorization_code&redirect_uri=" + process.env.NEXT_PUBLIC_URL + "/api/auth/callback";
 }
 
-function getAuthorizationData(){
+function getAuthorizationData() {
   const appName = process.env.NEXT_PUBLIC_DEX_APP_NAME;
   const secret = process.env.DEX_SECRET;
-  const authString = appName+":"+secret;
+  const authString = appName + ":" + secret;
   console.log("Decoded authString: " + authString);
   let buff = new Buffer(authString);
   let base64data = buff.toString('base64');
@@ -37,7 +33,7 @@ async function requestAuthToken(code) {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Accept-Encoding': 'application/gzip',
-        'Authorization': 'Basic '+getAuthorizationData(), //this is the client secret and the client name base64 encoded
+        'Authorization': 'Basic ' + getAuthorizationData(), //this is the client secret and the client name base64 encoded
         'Content-Length': requestBody.length
       }
     }
@@ -100,26 +96,20 @@ async function extractAuthUserdata(authToken) {
 async function findUserInDatabase(authUserData) {
   console.log("Find user in database");
   const email = authUserData.email;
-  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user?' + new URLSearchParams({ email });
+  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/getUserByEmail?' + new URLSearchParams({ email });
   console.log("Fetch url: " + userAPIURL);
   const response = await fetch(userAPIURL)
-  let userData = {};
-  if(response.ok){
-    console.log("response ok" + JSON.stringify(response));
-    userData = await response.json();
-    console.log("After await json");
-    if(userData.user === null){
-      console.log("User does not exists!");
-      return null;
-    }
+  if (response.ok) {
+    console.log("findUserInDatabase user is ok!");
+    return await response.json();
   }
   else {
     console.log("response not ok");
+    return null;
   }
-  return userData.user;
 }
 
-function createUserFromAuthData(authUserData){
+function createUserFromAuthData(authUserData) {
   console.log("createUserFromAuthData" + JSON.stringify(authUserData));
   return {
     email: authUserData.email,
@@ -130,7 +120,7 @@ function createUserFromAuthData(authUserData){
 
 async function createUserInDatabase(authUserData) {
   console.log("createUserInDatabase");
-  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/user';
+  const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/saveUser';
   const user = createUserFromAuthData(authUserData);
   const response = await fetch(userAPIURL, {
     method: 'POST',
@@ -160,7 +150,7 @@ export async function handleAuthCallback(req, res) {
   const authUserData = await extractAuthUserdata(JSON.parse(result.authToken));
   console.log("AuthUserData type: " + authUserData);
 
-  const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/auth/session';
+  const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/session/saveSession';
   const requestBody = `{"sessionId":"${sessionId}", "authToken":${authTokenString},"expiration":"${expirationDate}","email":"${authUserData.email}"}`;
   console.log("URL: " + sessionAPIURL);
   //save session data: 
@@ -168,20 +158,23 @@ export async function handleAuthCallback(req, res) {
     method: 'POST',
     body: requestBody,
   });
+  if (!response.ok) {
+    console.log("Not successfully saved session Data!");
+    res.status(500).send("Could not save session data!");
+    return;
+  }
+
+  console.log("Successfully saved session Data!");
 
   console.log("Save sessionData response: " + JSON.stringify(response));
 
-  
 
-
-  const user = await findUserInDatabase(authUserData);
+  const user = await findUserInDatabase(authUserData)
   if (!user) {
     console.log("No user found! Creating one");
-     await createUserInDatabase(authUserData);
+    await createUserInDatabase(authUserData);
   }
 
-
-  // saveSessionData(sessionId,authToken);//This will also check if the user has been logged before if not create a new user
   res.setHeader(
     'Set-Cookie',
     `sessionId=${sessionId}; Path=/; HttpOnly; Expires=${expirationDate}`
