@@ -279,12 +279,9 @@ const results = () => {
             let graphData = []
             let labels = []
             userData.assesments.forEach((assesment) => {
-                console.log("Do assesment");
-                console.log(JSON.stringify(assesment));
                 var testCalc = new assessmentCalculator(assesment.assesment);
                 testCalc.computeResults();
                 var finalScore = testCalc.overallScore.toFixed(2);
-                console.log("Results.js FinalScore: " + finalScore);
                 const assesmentDate = assesment.timestamp.substr(0,10);
                 graphData.push(finalScore);
                 labels.push(assesmentDate);
@@ -301,9 +298,6 @@ const results = () => {
             completionText = 'You must first complete the questionnaire to see results'
         }
     }, [])
-
-
-    console.log("trendsData before render() " + JSON.stringify(trendsGraph))
 
     return (
         <>

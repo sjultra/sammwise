@@ -9,22 +9,15 @@ function getAuthorizationData() {
   const appName = process.env.NEXT_PUBLIC_DEX_APP_NAME;
   const secret = process.env.DEX_SECRET;
   const authString = appName + ":" + secret;
-  console.log("Decoded authString: " + authString);
   let buff = new Buffer(authString);
   let base64data = buff.toString('base64');
 
-  console.log("Base64 authorization data: " + base64data);
-  //U0FNTVdpc2U6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw
-  // console.log("Original base64 auth data: " + "ZXhhbXBsZS1hcHA6WlhoaGJYQnNaUzFoY0hBdGMyVmpjbVYw");
   return base64data;
 }
 
 async function requestAuthToken(code) {
   return new Promise((resolve, request) => {
     const requestBody = getRequestBody(code);
-    // console.log("request Body: " + requestBody);
-    console.log("In Promise/: " + process.env.NEXT_PUBLIC_DEX_APP_NAME);
-    //TODO move this into a dedicated function which will return the idToken. Then saves the relevant part to db 
     const options = {
       hostname: process.env.HOSTNAME,
       port: 5556,
@@ -38,8 +31,6 @@ async function requestAuthToken(code) {
       }
     }
 
-    console.log("Before http request");
-    console.log("Code: " + code);
     var body = '';
 
     const postRequest = http
@@ -49,9 +40,7 @@ async function requestAuthToken(code) {
           body = body + d;
         });
         resp.on('end', () => {
-          // console.log("Body: " + body);
           resolve(body);
-          // return handleAuthRequest(res, body);
         })
       })
       .on("error", err => {
@@ -72,7 +61,6 @@ function generateSessionId() {
 function getSessionExpirationDate() {
   let expirationDate = new Date();
   expirationDate.setHours(expirationDate.getHours() + 1);
-  console.log("Expiration datE: " + expirationDate);
   return expirationDate;
 }
 
@@ -83,34 +71,25 @@ function decodeBase64(data) {
 }
 
 async function extractAuthUserdata(authToken) {
-  console.log("extractAuthUserdata()");
-  console.log("AuthToken: " + JSON.stringify(authToken));
   const idToken = authToken.id_token;
   const tokens = idToken.split(".");
-  // console.log("IDToken: " + idToken);
   const plainData = decodeBase64(tokens[1]);
-  // console.log("Decoded JWT: " + plainData);
   return JSON.parse(plainData);
 }
 
 async function findUserInDatabase(authUserData) {
-  console.log("Find user in database");
   const email = authUserData.email;
   const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/getUserByEmail?' + new URLSearchParams({ email });
-  console.log("Fetch url: " + userAPIURL);
   const response = await fetch(userAPIURL)
   if (response.ok) {
-    console.log("findUserInDatabase user is ok!");
     return await response.json();
   }
   else {
-    console.log("response not ok");
     return null;
   }
 }
 
 function createUserFromAuthData(authUserData) {
-  console.log("createUserFromAuthData" + JSON.stringify(authUserData));
   return {
     email: authUserData.email,
     name: authUserData.name,
@@ -119,59 +98,40 @@ function createUserFromAuthData(authUserData) {
 }
 
 async function createUserInDatabase(authUserData) {
-  console.log("createUserInDatabase");
   const userAPIURL = process.env.NEXT_PUBLIC_URL + '/api/user/saveUser';
   const user = createUserFromAuthData(authUserData);
   const response = await fetch(userAPIURL, {
     method: 'POST',
     body: JSON.stringify(user)
   });
-  console.log("Save user response: " + JSON.stringify(response));
 }
 
 export async function handleAuthCallback(req, res) {
-  console.log("handleAuthCallback");
-
-  console.log("Before handleCallback");
   const result = await handleDexAuthCallback(req);
-  // console.log("After handleDexAuthCallback. result: " + JSON.stringify(result));
 
-  // Set session ID or update user information in the session
   if (!result.success) {
     res.status(401).end('Authentication failed');
   }
 
   const sessionId = generateSessionId();
-  console.log("Generated sessionId: " + sessionId);
-  const authToken = JSON.parse(result.authToken);
   const authTokenString = result.authToken;
   const expirationDate = getSessionExpirationDate();
 
   const authUserData = await extractAuthUserdata(JSON.parse(result.authToken));
-  console.log("AuthUserData type: " + authUserData);
 
   const sessionAPIURL = process.env.NEXT_PUBLIC_URL + '/api/session/saveSession';
   const requestBody = `{"sessionId":"${sessionId}", "authToken":${authTokenString},"expiration":"${expirationDate}","email":"${authUserData.email}"}`;
-  console.log("URL: " + sessionAPIURL);
-  //save session data: 
   const response = await fetch(sessionAPIURL, {
     method: 'POST',
     body: requestBody,
   });
   if (!response.ok) {
-    console.log("Not successfully saved session Data!");
     res.status(500).send("Could not save session data!");
     return;
   }
 
-  console.log("Successfully saved session Data!");
-
-  console.log("Save sessionData response: " + JSON.stringify(response));
-
-
   const user = await findUserInDatabase(authUserData)
   if (!user) {
-    console.log("No user found! Creating one");
     await createUserInDatabase(authUserData);
   }
 
@@ -184,20 +144,10 @@ export async function handleAuthCallback(req, res) {
 }
 
 export async function handleDexAuthCallback(req) {
-  console.log("HandleCallback");
   try {
     const { code, state } = req.query;
-    console.log("Code: " + code);
-    console.log("State: " + state);
 
-    // Exchange the authorization code for an access token
     const authToken = await requestAuthToken(code);
-    // console.log("AuthToken: " + authToken);
-    // // Use the access token to get user information from DexiDP
-    // const auth = await getUserInfo(authToken);
-
-    // Authenticate the user and obtain user information
-    // const user = await authenticateUser(userInfo);
 
     return {
       success: true,
@@ -211,46 +161,3 @@ export async function handleDexAuthCallback(req) {
     };
   }
 }
-
-// async function exchangeCodeForAccessToken(code) {
-//   const tokenEndpoint = 'http://127.0.0.1:5556/dex/token'; // Replace with the actual DexiDP token endpoint
-//   const clientId = 'example-app'; // Replace with your client ID
-//   const clientSecret = 'ZXhhbXBsZS1hcHAtc2VjcmV0'; // Replace with your client secret
-//   const redirectUri = 'http://127.0.0.1:3000/api/auth/callback'; // Replace with your redirect URI
-
-//   const requestBody = {
-//     grant_type: 'authorization_code',
-//     code,
-//     redirect_uri: redirectUri,
-//     client_id: clientId,
-//     client_secret: clientSecret,
-//   };
-
-//   const response = await fetch(tokenEndpoint, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/x-www-form-urlencoded',
-//     },
-//     body: new URLSearchParams(requestBody).toString(),
-//   });
-
-//   if (!response.ok) {
-//     throw new Error('Failed to exchange code for access token');
-//   }
-//   console.log("Response from POST: " + response);
-//   const responseBody = await response.json();
-//   const accessToken = responseBody.access_token;
-
-//   return accessToken;
-// }
-
-// async function getUserInfo(jsonData) {
-//   console.log("getUserInfo: " + jsonData);
-//   const jsonObject = JSON.parse(jsonData);
-//   const idToken = jsonObject.id_token;
-//   console.log("IDToken: " + idToken);
-//   return jsonObject;
-//   // Implement the logic to get user information from DexiDP using the access token
-//   // This may involve making a request to DexiDP userinfo endpoint
-//   // Return the user information
-// }

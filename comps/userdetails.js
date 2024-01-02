@@ -6,15 +6,12 @@ import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization
 
 const UserDetails = (props) => {
   const router = useRouter();
-  // console.log("props.user" + JSON.stringify(props));
 
   const logout = async () => {
-    console.log("logout!");
     await fetch("/api/session/deleteSession",{
       method:"DELETE"
     });
     const dexiDPURL = getDexiDPAuthenticationURL();
-    console.log("Before logout redirect"); 
     router.push(dexiDPURL);
   }
 

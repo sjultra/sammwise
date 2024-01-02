@@ -19,13 +19,10 @@ const User = () => {
   const [userData, setUserData] = useState(null);
 
   const fetchUserData = async () => {
-    console.log("Fetch user Data");
     try {
-      console.log("Before await fetch getUserData.js");
       const response = await fetch("/api/user/getUserData");
       if(response.ok){
         const userJSON = await response.json();
-        console.log("user.js UserData Response: " + JSON.stringify(userJSON));
         setUserData(userJSON);
         sessionStorage.setItem('userData', JSON.stringify(userJSON));
       }
