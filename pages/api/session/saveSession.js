@@ -29,7 +29,6 @@ function generateSessionDocument(_sessionId, authToken,_expiration,_email) {
 
 export default async (req, res) => {
     if (req.method !== 'POST') {
-        console.log("saveSession.js Only POST is allowed");
         return res.status(401).send("saveSession.js Only POST is allowed");
     }
 

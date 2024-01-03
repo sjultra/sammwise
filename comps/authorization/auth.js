@@ -144,7 +144,6 @@ export async function handleAuthCallback(req, res) {
 }
 
 function checkState(req,state){
-  console.log("checkState() Cookies: " + JSON.stringify(req.cookies));
   if(req.cookies["state"] != state)
     return false;
   return true;

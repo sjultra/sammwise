@@ -122,9 +122,6 @@ const results = () => {
         const previousData = sessionStorage.getItem('prevResults');
         const assessmentSessionStateData = JSON.parse(sessionStorage.getItem('assessmentState'));
 
-
-        console.log()
-
         var answer_values = []
         // fill values array 
         for (const key in assessmentSessionStateData) {
