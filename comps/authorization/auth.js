@@ -9,7 +9,7 @@ function getAuthorizationData() {
   const appName = process.env.NEXT_PUBLIC_DEX_APP_NAME;
   const secret = process.env.DEX_SECRET;
   const authString = appName + ":" + secret;
-  let buff = new Buffer(authString);
+  let buff = Buffer.from(authString);
   let base64data = buff.toString('base64');
 
   return base64data;
@@ -65,7 +65,7 @@ function getSessionExpirationDate() {
 }
 
 function decodeBase64(data) {
-  let buff = new Buffer(data, 'base64');
+  let buff = Buffer.from(data, 'base64');
   let plainData = buff.toString('ascii');
   return plainData;
 }
