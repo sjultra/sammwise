@@ -3,7 +3,7 @@ export default class TrendsGraph{
         this.metaData = {
             labels: [],
             datasets: [{
-              label: 'Assessments',
+              label: 'Assessments History',
               backgroundColor: 'rgba(255,99,132,0.7)',
               borderColor: 'rgb(11,227,210)',
               borderWidth: 1,
@@ -34,8 +34,7 @@ export default class TrendsGraph{
                     position: 'top',
                   },
                   title: {
-                    display: true,
-                    text: 'Sammways Line Chart',
+                    display: false,
                   },
                 },
                 scales: {

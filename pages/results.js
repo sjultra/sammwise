@@ -21,7 +21,6 @@ import Dataset from '../comps/surveyDisplay/graphs/datasetprops';
 import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
 
-import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 import TrendsGraph from "../comps/surveyDisplay/graphs/trendgraph";
 
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
@@ -50,22 +49,6 @@ bussFuncBarGraph.set_aspect_ratio(1)
 practiceBarGraph.set_aspect_ratio(1)
 var l = ["No", "Yes, for some", "Yes, for most", "Yes, for all"]
 totalsBarGraph.set_labels(l)
-// labels = []
-// let labels =[];//= ['January', 'February', 'March', 'April', 'May', 'June', 'July','August','September','October','November','December'];
-// let linearData = [];
-// let lineData = {};
-// let lineData = {
-//                     labels,
-//                     datasets: [
-//                     {
-//                         label: 'SAMMWise',
-//                         data: labels.map(() => Math.floor(Math.random()*5)),
-//                         borderColor: 'rgb(255, 99, 132)',
-//                         backgroundColor: 'rgba(255, 99, 132, 0.5)',
-//                     },
-//                     ],
-//                  }
-
 
 var graphObjects = {
     'donut_graph': donutGraph,
@@ -368,7 +351,7 @@ const results = () => {
                     <Flex flexWrap='wrap'>
                         <Box width={[1/2, 1]} p={3} className="practicesBarBox">
                             <h2 id="trendsgraph"> Project Trends </h2>
-                            <Line className='practiceBar' options={trendsGraph.options} data={trendsGraph.metaData} />
+                            <Line className='practiceBar' options={trendsGraph.metaData.options} data={trendsGraph.metaData} />
                         </Box>
                     </Flex>
                 </div>
