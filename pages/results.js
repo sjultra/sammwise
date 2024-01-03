@@ -10,8 +10,7 @@ import { useRouter } from "next/router";
 import Head from 'next/head'
 import ReactToPrint from 'react-to-print';
 import 'chartjs-adapter-moment';
-import { isAuthenticated } from '../lib/auth'
-
+import { isAuthenticated, getLoginLink } from '../lib/auth'
 
 //local imports
 import DonutGraph from '../comps/surveyDisplay/graphs/donutgraph';
@@ -86,13 +85,16 @@ function saveText(text, filename) {
 }
 
 
-export const getServerSideProps = async (context) => {
-    const user = await isAuthenticated(context.req);
+
+export const getServerSideProps = async ({req,res}) => {
+    const user = await isAuthenticated(req);
   
     if (!user) {
+      const dexUrl = await getLoginLink(req,res)//getDexiDPAuthenticationURL();
+  
       return {
         redirect: {
-          destination: getDexiDPAuthenticationURL(),
+          destination: dexUrl,
           permanent: false,
         },
       };
@@ -103,7 +105,7 @@ export const getServerSideProps = async (context) => {
         user,
       },
     };
-};
+  };
 
 const results = () => {
     const [display, setDisplay] = useState(0)

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from '../styles/userdetails.module.css'
 import { useRouter } from "next/router";
-import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
 
 
 const UserDetails = (props) => {
@@ -11,8 +10,8 @@ const UserDetails = (props) => {
     await fetch("/api/session/deleteSession",{
       method:"DELETE"
     });
-    const dexiDPURL = getDexiDPAuthenticationURL();
-    router.push(dexiDPURL);
+    // const dexiDPURL = getLoginLink();
+    router.push("/");
   }
 
   if(props.user === null || props.user === undefined) {

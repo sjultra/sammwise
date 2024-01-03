@@ -2,27 +2,28 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 import { useEffect } from 'react'
-import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
-import { isAuthenticated } from '../lib/auth'
+import { isAuthenticated,getLoginLink } from '../lib/auth'
 
-export const getServerSideProps = async (context) => {
-    const user = await isAuthenticated(context.req);
-  
-    if (!user) {
-      return {
-        redirect: {
-          destination: getDexiDPAuthenticationURL(),
-          permanent: false,
-        },
-      };
-    }
-  
+export const getServerSideProps = async ({req,res}) => {
+  const user = await isAuthenticated(req);
+
+  if (!user) {
+    const dexUrl = await getLoginLink(req,res)
+
     return {
-      props: {
-        user,
+      redirect: {
+        destination: dexUrl,
+        permanent: false,
       },
     };
+  }
+
+  return {
+    props: {
+      user,
+    },
   };
+};
 
 const About = () => {
     useEffect(()=> {

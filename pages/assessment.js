@@ -4,21 +4,20 @@ import 'survey-react/survey.css';
 import Head from 'next/head'
 //local imports 
 import dynamic from 'next/dynamic';
-import { getDexiDPAuthenticationURL } from '../comps/authorization/authorization'
-import { isAuthenticated } from '../lib/auth'
+import {isAuthenticated, getLoginLink } from '../lib/auth'
 
 // import Mysurvey from '../comps/surveyDisplay/surveyone'
 const Mysurvey = dynamic(() => import('../comps/surveyDisplay/surveyone'), { ssr: false })
 
-
-
-export const getServerSideProps = async (context) => {
-  const user = await isAuthenticated(context.req);
+export const getServerSideProps = async ({req,res}) => {
+  const user = await isAuthenticated(req);
 
   if (!user) {
+    const dexUrl = await getLoginLink(req,res)
+
     return {
       redirect: {
-        destination: getDexiDPAuthenticationURL(),
+        destination: dexUrl,
         permanent: false,
       },
     };

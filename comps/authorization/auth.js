@@ -143,10 +143,22 @@ export async function handleAuthCallback(req, res) {
   return res.status(302).redirect('/');
 }
 
+function checkState(req,state){
+  console.log("checkState() Cookies: " + JSON.stringify(req.cookies));
+  if(req.cookies["state"] != state)
+    return false;
+  return true;
+}
+
 export async function handleDexAuthCallback(req) {
   try {
     const { code, state } = req.query;
-
+    
+    if(!checkState(req,state))
+      return {
+        success: false,
+        error: 'Authentication failed',
+      };
     const authToken = await requestAuthToken(code);
 
     return {
