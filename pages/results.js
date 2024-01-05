@@ -21,8 +21,6 @@ import Dataset from '../comps/surveyDisplay/graphs/datasetprops';
 import assessmentCalculator from '../comps/surveyDisplay/graphs/testCalculator';
 import SurveyButton from '../comps/buttons/surveybuttons';
 
-import TrendsGraph from "../comps/surveyDisplay/graphs/trendgraph";
-
 const GaugeChart = dynamic(() => import('react-gauge-component'), { ssr: false });
 Chart.register(...registerables);
 
@@ -42,7 +40,7 @@ practiceRadar.set_title_text("practice")
 const totalsBarGraph = new Bargraph()
 const bussFuncBarGraph = new Bargraph()
 const practiceBarGraph = new Bargraph()
-const trendsGraph = new TrendsGraph();
+
 const additionalDataset = new Dataset()
 totalsBarGraph.set_aspect_ratio(3)
 bussFuncBarGraph.set_aspect_ratio(1)
@@ -257,21 +255,21 @@ const results = () => {
                 // }
             }
 
-            const userData = JSON.parse(sessionStorage.getItem('userData'))
-            let graphData = []
-            let labels = []
-            userData.assesments.forEach((assesment) => {
-                var testCalc = new assessmentCalculator(assesment.assesment);
-                testCalc.computeResults();
-                var finalScore = testCalc.overallScore.toFixed(2);
-                const assesmentDate = assesment.timestamp.substr(0,10);
-                graphData.push(finalScore);
-                labels.push(assesmentDate);
+            // const userData = JSON.parse(sessionStorage.getItem('userData'))
+            // let graphData = []
+            // let labels = []
+            // userData.assesments.forEach((assesment) => {
+            //     var testCalc = new assessmentCalculator(assesment.assesment);
+            //     testCalc.computeResults();
+            //     var finalScore = testCalc.overallScore.toFixed(2);
+            //     const assesmentDate = assesment.timestamp.substr(0,10);
+            //     graphData.push(finalScore);
+            //     labels.push(assesmentDate);
 
-            })
+            // })
 
-            trendsGraph.metaData.labels = labels;
-            trendsGraph.metaData.datasets[0].data = graphData;
+            // trendsGraph.metaData.labels = labels;
+            // trendsGraph.metaData.datasets[0].data = graphData;
 
             setDisplay(1)
         }
@@ -344,14 +342,6 @@ const results = () => {
                         <Box width={[1, 1 / 2]} p={3} className="practicesBarBox">
                             <h2 id="pracbargraph"> Maturity by Practice </h2>
                             <Bar data={practiceBarGraph.metaData} options={practiceBarGraph.layout_props} className='practiceBar' />
-                        </Box>
-                    </Flex>
-                </div>
-                <div label='Trends' className="practices">
-                    <Flex flexWrap='wrap'>
-                        <Box width={[1/2, 1]} p={3} className="practicesBarBox">
-                            <h2 id="trendsgraph"> Project Trends </h2>
-                            <Line className='practiceBar' options={trendsGraph.metaData.options} data={trendsGraph.metaData} />
                         </Box>
                     </Flex>
                 </div>

@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import Link from 'next/link'
 import styles from '../styles/userdetails.module.css'
 import { useRouter } from "next/router";
-
 
 const UserDetails = (props) => {
   const router = useRouter();
@@ -31,6 +30,7 @@ const UserDetails = (props) => {
           <ul>
             <li>{props.user.name}</li>
             <li>{props.user.email}</li>
+            <li><Link href="/dashboard" legacyBehavior><a>Dashboard</a></Link></li>
             <li><button onClick={logout}>Log Out</button></li>
           </ul>
         </div>
