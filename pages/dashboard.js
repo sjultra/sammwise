@@ -41,37 +41,31 @@ export const getServerSideProps = async ({req,res}) => {
 
 const Dashboard = () => {
   const [display, setDisplay] = useState(0)
-
+  const [trendsGraphData, setTrendsGraphData] = useState(new TrendsGraph());
     useEffect(()=> {
         var userState = JSON.parse(sessionStorage.getItem('userState'));
         userState['page'] = "dashboard";
         userState['has_switched_page'] = true;
         sessionStorage.setItem('userState', JSON.stringify(userState));
     })
-    
-    
 
     useEffect(() => {
-      console.log("Dashboard use effect");
-          const userData = JSON.parse(sessionStorage.getItem('userData'))
+          const usrData = JSON.parse(sessionStorage.getItem('userData'))
           let graphData = []
           let labels = []
-          userData.assesments.forEach((assesment) => {
+          usrData.assesments.forEach((assesment) => {
               var testCalc = new assessmentCalculator(assesment.assesment);
               testCalc.computeResults();
               var finalScore = testCalc.overallScore.toFixed(2);
               const assesmentDate = assesment.timestamp.substr(0,10);
               graphData.push(finalScore);
               labels.push(assesmentDate);
-
           })
 
           trendsGraph.metaData.labels = labels;
           trendsGraph.metaData.datasets[0].data = graphData;
-
-          setDisplay(1)
-  },[])
-
+          setTrendsGraphData(trendsGraph);
+  },[trendsGraphData])
 
     return ( 
         <>
@@ -86,7 +80,7 @@ const Dashboard = () => {
                     <Flex flexWrap='wrap'>
                         <Box width={[1/2, 1]} p={3} className="practicesBarBox">
                             <h2 id="trendsgraph"> Project Trends </h2>
-                            <Line className='practiceBar' options={trendsGraph.metaData.options} data={trendsGraph.metaData} />
+                            <Line className='practiceBar' options={trendsGraphData.metaData.options} data={trendsGraphData.metaData} />
                         </Box>
                     </Flex>
                 </div>
