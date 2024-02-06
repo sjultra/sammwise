@@ -1,13 +1,16 @@
 import dynamic from "next/dynamic";
 
 // react imports
-import { Radar, Bar } from 'react-chartjs-2';
+import { Radar, Bar, Line } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
 import { Flex, Box } from 'reflexbox'
 // import GaugeChart from 'react-gauge-chart'
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from "next/router";
 import Head from 'next/head'
 import ReactToPrint from 'react-to-print';
+import 'chartjs-adapter-moment';
+import { isAuthenticated, getLoginLink } from '../lib/auth'
 
 //local imports
 import DonutGraph from '../comps/surveyDisplay/graphs/donutgraph';
@@ -37,14 +40,13 @@ practiceRadar.set_title_text("practice")
 const totalsBarGraph = new Bargraph()
 const bussFuncBarGraph = new Bargraph()
 const practiceBarGraph = new Bargraph()
+
 const additionalDataset = new Dataset()
 totalsBarGraph.set_aspect_ratio(3)
 bussFuncBarGraph.set_aspect_ratio(1)
 practiceBarGraph.set_aspect_ratio(1)
 var l = ["No", "Yes, for some", "Yes, for most", "Yes, for all"]
 totalsBarGraph.set_labels(l)
-
-
 
 var graphObjects = {
     'donut_graph': donutGraph,
@@ -65,10 +67,28 @@ function saveText(text, filename) {
 
 
 
+export const getServerSideProps = async ({req,res}) => {
+    const user = await isAuthenticated(req);
+  
+    if (!user) {
+      const dexUrl = await getLoginLink(req,res)//getDexiDPAuthenticationURL();
+  
+      return {
+        redirect: {
+          destination: dexUrl,
+          permanent: false,
+        },
+      };
+    }
+  
+    return {
+      props: {
+        user,
+      },
+    };
+  };
+
 const results = () => {
-
-
-
     const [display, setDisplay] = useState(0)
     const [showPrevious, setShowPrevious] = useState(false)
     const componentRef = useRef();
@@ -76,13 +96,12 @@ const results = () => {
     function reloadPage() {
         location.reload();
     }
-
+     
     useEffect(() => {
 
         const sessionData = sessionStorage.getItem('dataResults');
         const previousData = sessionStorage.getItem('prevResults');
         const assessmentSessionStateData = JSON.parse(sessionStorage.getItem('assessmentState'));
-
 
         var answer_values = []
         // fill values array 
@@ -219,7 +238,7 @@ const results = () => {
                     //  }
                 }
                 finalScore[dataNum] = testCalc.overallScore.toFixed(2);
-
+                console.log("Results.js FinalScore: " + finalScore[0]);
                 percentageScore = (finalScore[dataNum] / 3).toFixed(2);
                 // console.log(percentageScore)
 
@@ -227,7 +246,7 @@ const results = () => {
                 //      totalsBarGraph.metaData.datasets[0].data[0] = 0;
                 //  }
 
-                console.log(finalScore[dataNum])
+                console.log("Final Score:" + finalScore[dataNum])
                 console.log(finalScore);
                 companyname = dataENV[dataNum]['Company Name']
                 completionText += " " + companyname
@@ -235,6 +254,23 @@ const results = () => {
                 projectDesc = dataENV[dataNum]["Description of Project"]
                 // }
             }
+
+            // const userData = JSON.parse(sessionStorage.getItem('userData'))
+            // let graphData = []
+            // let labels = []
+            // userData.assesments.forEach((assesment) => {
+            //     var testCalc = new assessmentCalculator(assesment.assesment);
+            //     testCalc.computeResults();
+            //     var finalScore = testCalc.overallScore.toFixed(2);
+            //     const assesmentDate = assesment.timestamp.substr(0,10);
+            //     graphData.push(finalScore);
+            //     labels.push(assesmentDate);
+
+            // })
+
+            // trendsGraph.metaData.labels = labels;
+            // trendsGraph.metaData.datasets[0].data = graphData;
+
             setDisplay(1)
         }
         else {
@@ -242,7 +278,6 @@ const results = () => {
             completionText = 'You must first complete the questionnaire to see results'
         }
     }, [])
-
 
     return (
         <>

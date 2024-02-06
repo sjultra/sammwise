@@ -469,10 +469,31 @@ const Mysurvey = (prop) => {
         if (userStateData != 'assessmentPage'){
             return true;
         } else {
-            return false
+            return false;
         }
     }
 
+    async function saveAssesmentToDB(){
+        let assesmentString = sessionStorage.getItem('assessmentState');
+        const assesment = JSON.parse(assesmentString);
+        const response = await fetch('/api/user/updateUserAssesments', {
+            method: 'PUT',
+            body: JSON.stringify({timestamp: new Date(),assesment})
+          })
+        if(!response.ok){
+            return;
+        }
+        console.log("SaveAssesmentToDB response ok!");
+        const userData = await response.json();
+        // let userData = JSON.parse(sessionStorage.getItem('userData'));
+        console.log("userData on complete: " + JSON.stringify(userData));
+        // userData.assesments.push({
+        //     timestamp: new Date(),
+        //     assesment
+        // })
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+    
+    }
     
 // return a page full of the Survey.JS json that was built in the "surveys" Folder 
     return (
@@ -500,7 +521,9 @@ const Mysurvey = (prop) => {
             <div className="pageNav">
                 {isDetailsPage?
                     <>
-                        <button className="NextPage" onClick={()=> changePage("next")}> Complete </button>
+                        <button className="NextPage" onClick={()=> {
+                            saveAssesmentToDB();
+                            changePage("next")}}> Complete </button>
                     </>
                 :
                 <>
