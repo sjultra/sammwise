@@ -16,20 +16,15 @@ module.exports = {
 
   async rewrites() {
     return [
-      // {
-      //   source: '/',
-      //   destination: process.env.RANCHER_SERVER+process.env.NEXT_BASE_PATH // Proxy to Backend
-      // },
       {
         has: [
           {
             type: 'host',
-            value: 'https://rancher.vzxy.net' || process.env.RANCHER_SERVER,
+            value: 'rancher.vzxy.net',
           },
         ],
         source: '/:path*',
-        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy/:path*' || process.env.RANCHER_SERVER,
-        // basePath: false,
+        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/:path*',
       },
     ]
   }
