@@ -1,6 +1,0 @@
-targetCustomizations:
-- name: test1
-  helm:
-    values:
-      sammwise:
-        NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/{{ .ClusterName }}/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
