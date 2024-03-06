@@ -15,7 +15,7 @@ app.prepare().then(() => {
     const parsedUrl = parse(req.url, true);
     const { hostname, pathname } = parsedUrl;
     // parsedUrl.
-    console.log(hostname, pathname);
+    console.log(JSON.stringify(parsedUrl));
 
     // check configured hostnames and qualifier for non proxy paths
     if (hostname === PROXY_HOSTNAME && !pathname.includes("/proxy")) {
