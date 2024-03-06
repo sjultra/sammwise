@@ -14,49 +14,49 @@ module.exports = {
   // }
 
 
-  async rewrites() {
-    return [
-      {
-        has: [
-          {
-            type: 'host',
-            value: 'rancher.vzxy.net',
-          },
-        ],
-        // source: '/:path*',
-        source: '/',
-        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/',
-      },
-      {
-        has: [
-          {
-            type: 'host',
-            value: 'rancher.vzxy.net',
-          },
-        ],
-        source: '/about',
-        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/about',
-      },
-      {
-        has: [
-          {
-            type: 'host',
-            value: 'rancher.vzxy.net',
-          },
-        ],
-        source: '/assessment',
-        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/assessment',
-      },
-      {
-        has: [
-          {
-            type: 'host',
-            value: 'rancher.vzxy.net',
-          },
-        ],
-        source: '/assessment',
-        destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/assessment',
-      },
-    ]
-  }
+  // async rewrites() {
+  //   return [
+  //     {
+  //       has: [
+  //         {
+  //           type: 'host',
+  //           value: 'rancher.vzxy.net',
+  //         },
+  //       ],
+  //       // source: '/:path*',
+  //       source: '/',
+  //       destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/',
+  //     },
+  //     {
+  //       has: [
+  //         {
+  //           type: 'host',
+  //           value: 'rancher.vzxy.net',
+  //         },
+  //       ],
+  //       source: '/about',
+  //       destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/about',
+  //     },
+  //     {
+  //       has: [
+  //         {
+  //           type: 'host',
+  //           value: 'rancher.vzxy.net',
+  //         },
+  //       ],
+  //       source: '/assessment',
+  //       destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/assessment',
+  //     },
+  //     {
+  //       has: [
+  //         {
+  //           type: 'host',
+  //           value: 'rancher.vzxy.net',
+  //         },
+  //       ],
+  //       source: '/assessment',
+  //       destination: '/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http%3Asammwise%3A80/proxy/assessment',
+  //     },
+  //   ]
+  // }
 }
