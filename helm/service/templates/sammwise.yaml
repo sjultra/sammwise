@@ -12,31 +12,58 @@ spec:
       labels:
         app: sammwise
     spec:
+      {{- with .Values.sammwise.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sammwise.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.sammwise.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: sammwise
-          image: "{{ .Values.sammwise.image }}:{{ .Values.sammwise.tag }}"
-          # {{- if .Values.sammwise.NEXT_PUBLIC_BASE_PATH }}
-          env:
-            - name: NEXT_BASE_PATH
-              value: {{ .Values.sammwise.NEXT_BASE_PATH | quote }}
-          #   - name: RANCHER_SERVER
-          #     value: {{ .Values.sammwise.RANCHER_SERVER | quote }}
-
-          # {{- end }}
+          image: "{{ .Values.sammwise.image.repository }}:{{ .Values.sammwise.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.sammwise.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: sammwise
 spec:
+  type: NodePort
   selector:
     app: sammwise
   ports:
-    - name: https
-      protocol: TCP
-      port: 443
-      targetPort: 3000
-    - name: http
+    - name: http          # LAN access at http://<node-ip>:<nodePort>; public traffic goes nginx → Traefik → Ingress
       protocol: TCP
       port: 80
       targetPort: 3000
+      nodePort: {{ .Values.sammwise.service.nodePort }}
+{{- if .Values.sammwise.ingress.enabled }}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sammwise
+  annotations:
+    kubernetes.io/ingress.class: "traefik"  # TLS is terminated by nginx on the proxy host, which forwards to Traefik
+spec:
+  rules:
+    - host: {{ required "sammwise.ingress.host is required when sammwise.ingress.enabled is true" .Values.sammwise.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sammwise
+                port:
+                  number: 80
+{{- end }}

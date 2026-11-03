@@ -1,19 +1,19 @@
 # Default values for Sammwise.
 # Update these values according to your requirements.
-ingressHost: https://kubernetes.default.svc
 
 sammwise:
-  image: sjultra/sammwise
-  tag: latest
-  # port: 80
-  NEXT_BASE_PATH: "/k8s/clusters/c-m-6wzgb6p6/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
-  # NEXT_PUBLIC_BASE_PATH: "/k8s/clusters/c-m-26nk9h9f/api/v1/namespaces/sammwise/services/http:sammwise:80/proxy"
-  # RANCHER_SERVER: "https://rancher.vzxy.net"
+  image:
+    repository: sjultra/sammwise
+    tag: ""                               # defaults to the chart's appVersion; set only to override
+    pullPolicy: IfNotPresent
+  service:
+    nodePort: 30082                       # LAN access: http://<any-node-ip>:30082
+  ingress:
+    enabled: false                        # true = public at https://<host>; TLS is terminated by nginx on the proxy host
+    host: ""                              # required when enabled
 
-issuer:
-  issuerEmail: ops@sjultra.com
-  secretName: sammwise-tls-prod
-  privateKeyName: sammwise-tls-pkey-prod
-
-ingress:
-  ingressDomain: sammwise.vzxy.net
+  # deployment target(s)
+  nodeSelector:
+    kubernetes.io/arch: amd64             # the image is amd64-only
+  affinity: {}
+  tolerations: []

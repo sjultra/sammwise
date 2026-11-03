@@ -1,5 +1,5 @@
 apiVersion: v2
-name: sammwise-chart
-version: 0.1.0
+name: sammwise
+version: 0.2.0
 appVersion: "1.0.0"     # the image tag; the image workflow builds this version
 description: A Helm chart for deploying OWASP Sammwise

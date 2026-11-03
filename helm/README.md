@@ -1,9 +1,7 @@
 ```
-helm package sammwise
-
+helm package helm/service
 ```
 
-
 ```
-helm install sammwise sammwise.tgz --create-namespace --namespace sammwise
+helm install sammwise sammwise-<version>.tgz --create-namespace --namespace sammwise
 ```
