@@ -1,80 +1,87 @@
-# This is a basic workflow to help you get started with Actions
+# Builds sjultra/sammwise at the version in helm/service/Chart.yaml (appVersion).
+# Manual only: bump appVersion (and the chart's version), commit, then run this.
+# A version that's already published is never overwritten.
 
 name: Build and push docker image
 
-# Controls when the workflow will run
 on:
-  # commented to not be triggered on each commit
-  #   # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: ["main"]
-  #   pull_request:
-  #     branches: [ "main" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+permissions:
+  contents: read
+  packages: write       # GHCR push with GITHUB_TOKEN
+
 jobs:
-  # This workflow contains a single job called "build"
   build:
     runs-on: ubuntu-latest
     env:
-      JF_URL: ${{ secrets.JFROG_URL }}
-      JF_ACCESS_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
+      IMAGE: sjultra/sammwise
+      GHCR_IMAGE: ghcr.io/${{ github.repository_owner }}/sammwise
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
-      # Runs a single command using the runners shell
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - uses: actions/checkout@v5
+
+      - name: Read version
+        id: version
+        run: |
+          VERSION=$(yq '.appVersion' helm/service/Chart.yaml)
+          if [ -z "$VERSION" ] || [ "$VERSION" = "null" ]; then
+            echo "::error::appVersion is missing from helm/service/Chart.yaml"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GH_TOKEN }}
-      - name: Login to Jfrog Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: sju.jfrog.io
-          username: ${{ secrets.JFROG_USERNAME }}
-          password: ${{ secrets.JFROG_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # build: neither registry has it | copy: only Docker Hub does (a run that
+      # failed pushing to GHCR) | done: both do
+      - name: Check version
+        id: check
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          has() { docker manifest inspect "$1" >/dev/null 2>&1; }
+          if has "$IMAGE:$VERSION" && has "$GHCR_IMAGE:$VERSION"; then
+            echo "::notice::$VERSION is already published; bump appVersion in helm/service/Chart.yaml to publish"
+            echo "action=done" >> "$GITHUB_OUTPUT"
+          elif has "$IMAGE:$VERSION"; then
+            echo "action=copy" >> "$GITHUB_OUTPUT"
+          else
+            echo "action=build" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.check.outputs.action != 'done'
+        uses: docker/setup-buildx-action@v3
+
+      # the same image, not a rebuild: both registries end up with one digest
+      - name: Copy to GHCR
+        if: steps.check.outputs.action == 'copy'
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          docker buildx imagetools create -t "$GHCR_IMAGE:$VERSION" "$IMAGE:$VERSION"
+          docker buildx imagetools create -t "$GHCR_IMAGE:latest" "$IMAGE:$VERSION"
 
       - name: Build and push
-        uses: docker/build-push-action@v4
+        if: steps.check.outputs.action == 'build'
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile
           push: true
           tags: |
-            sjultra/sammwise:latest
-            ghcr.io/${{ github.repository_owner }}/sammwise:latest
-          
-      # ${{ secrets.JFROG_REGISTRY }}/${{ secrets.JFROG_REPOSITORY }}/sammwise:latest
-
-      # install and authenticate jfrog/artifactory CLI
-      # - uses: jfrog/setup-jfrog-cli@v3.0.0
-      # - name: Verify artifactory server connection
-      #   run: jf rt ping
-
-      # - name: Cleanup artifactory
-      #   run: |
-      #     jf rt del "owasp-swammwise-helm/*"
-
-      # - name: Distribute source to artifactory
-      #   run: |
-      #     cd ./helm
-      #     tar -cvzf sammwise.tgz ./service/
-      #     jf rt upload sammwise.tgz owasp-sammwise-helm/
-      #     cd -
-
+            ${{ env.IMAGE }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE }}:latest
+            ${{ env.GHCR_IMAGE }}:${{ steps.version.outputs.version }}
+            ${{ env.GHCR_IMAGE }}:latest
